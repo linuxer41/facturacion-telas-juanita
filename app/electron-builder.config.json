@@ -4,9 +4,9 @@
 	"productName": "Telas juanita",
 	"directories": { "output": "dist" },
 	"files": [
-		"main.cjs",
-		"preload.cjs",
-		"fonts.cjs",
+		"src/main.cjs",
+		"src/preload.cjs",
+		"srcfonts.cjs",
 		{ "from": "client", "to": "client" },
 		{ "from": "server", "to": "server" }
 
@@ -46,7 +46,7 @@
 	},
 	"nsis": {
 		"deleteAppDataOnUninstall": true,
-		"oneClick": true,
-		"allowToChangeInstallationDirectory": false
+		"oneClick": false,
+		"allowToChangeInstallationDirectory": true
 	}
 }

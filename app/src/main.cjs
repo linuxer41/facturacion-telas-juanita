@@ -19,7 +19,7 @@ let mainWindow;
 let printerWindow;
 
 if (!isdev) {
-	cp.fork(path.resolve('.', 'server/main.js'))
+	cp.fork(path.resolve(__dirname, '../server/main.js'))
 		.on('message', (msg) => {
 			console.log('server ready');
 			log.info('server ready');
@@ -33,7 +33,7 @@ if (!isdev) {
 
 const serve = require('electron-serve');
 
-const loadURL = serve({ directory: '.' });
+const loadURL = serve({ directory: 'client' });
 // @ts-ignore
 function loadVite(port) {
 	// @ts-ignore

@@ -1,3 +1,17 @@
+## Introduccion
+
+Este es un proyecto de facturacion compuatizada para la empresa TELAS JUANITA.
+Consta de 2 subproyectos principales:
+
+- **Apaciencia y estiles** (frontend)
+* Basado en el framework [svelte](https://svelte.dev/).
+* Utiliza [scss](https://sass-lang.com/) para los estilos.
+
+- **Aplicacion instalable** (app)
+* Basado en el framework [electron](https://www.electronjs.org/).
+* utiliza [nestjs](https://nestjs.com/) para interactuar con la base de datos y los servicios de impuestos nacionales Bolivia.
+
+
 ## Requisitos de desarrollo
 []: # 
 []: # - [Node.js](https://nodejs.org/) (v12.0.0+)
