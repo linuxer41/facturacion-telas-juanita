@@ -39,6 +39,7 @@ una vez que se haya completado, el ejecutable se encuentra en la carpeta /app/di
 
 ## Recomendaciones
 
+* para el desarrollo de la aplicacion se recomienda el uso de [Visual Studio Code](https://code.visualstudio.com/) y abrir la carpeta /frontend y /app como proyectos separados
 * No modificar la carpeta /app/server, ya que podria perder la autorizacion de la aplicacion con impuestos nacionales
 * La configuracion de la aplicacion se encuentra en la carpeta /app/.env o en la carpeta de instalacion de la aplicacion /.env
 * Los archivos estaticos como ser las facturas (.pdf, xml) se encuentran en la carpeta de instalacion de la aplicacion en un directorio llamado /files
