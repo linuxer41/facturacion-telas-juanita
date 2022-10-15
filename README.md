@@ -1,6 +1,6 @@
 ## Introduccion
 
-Este es un proyecto de facturacion compuatizada para la empresa TELAS JUANITA.
+Este es un proyecto de facturacion computarizada en linea para la empresa TELAS JUANITA.
 Consta de 2 subproyectos principales:
 
 - **Apaciencia y estiles** (frontend)
