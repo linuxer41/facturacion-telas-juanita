@@ -31,25 +31,22 @@ Consta de 2 subproyectos principales:
 
 ## Compilar
 
-Para crear una versión de producción de frontend:
+Para crear una versión de producción de /frontend:
 
 ```bash
 npm run build
 ```
 
-una vez que se haya completado, debe copiar el contenido de la carpeta `/frontend/build` al la carpeta /app/client
+una vez que se haya completado, debe copiar el contenido de la carpeta `/frontend/build` al la carpeta `/app/client`
 
-para crear una versión de producción de app:
+para crear una versión instalable de /app:
 
 ```bash
 npm run build
 ```
 
-una vez que se haya completado, el ejecutable se encuentra en la carpeta /app/dist
+una vez que se haya completado, el ejecutable se encuentra en la carpeta `/app/dist`
 
-## Licencia
-
-[MIT](https://choosealicense.com/licenses/mit/)
 
 ## Recomendaciones
 
@@ -58,5 +55,10 @@ una vez que se haya completado, el ejecutable se encuentra en la carpeta /app/di
 * La configuracion de la aplicacion se encuentra en la carpeta /app/.env o en la carpeta de instalacion de la aplicacion /.env
 * Los archivos estaticos como ser las facturas (.pdf, xml) se encuentran en la carpeta de instalacion de la aplicacion en un directorio llamado /files
 * puede modificar los templates de email en la carpeta /app/email-templates o en la carpeta de instalacion de la aplicacion /email-templates
+
+
+## Licencia
+
+[MIT](https://choosealicense.com/licenses/mit/)
 
 
