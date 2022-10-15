@@ -6,7 +6,7 @@
 	"files": [
 		"src/main.cjs",
 		"src/preload.cjs",
-		"srcfonts.cjs",
+		"src/fonts.cjs",
 		{ "from": "client", "to": "client" },
 		{ "from": "server", "to": "server" }
 
