@@ -1,0 +1,9 @@
+.filter {
+	overflow: auto;
+	height: 100%;
+	padding: 0rem 1rem;
+	display: grid;
+	grid-template-columns: 1fr;
+	place-content: start;
+	gap: 0.5rem;
+}

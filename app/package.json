@@ -1,0 +1,72 @@
+{
+	"name": "telas-juanita",
+	"version": "0.0.1",
+	"private": true,
+	"main": "src/main.cjs",
+	"author": {
+		"name": "Francisco Ochoa Gonzales",
+		"email": "linuxer41@gmail.com",
+		"url": "https://github.com/linuxer41"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/linuxer41/telas-juanita.git"
+	},
+	"license": "IATHINGS",
+	"description": "Sistema de facturacion computarizado",
+	"scripts": {
+		"siat": "node server/main.js",
+		"dev": "electron src/main.cjs",
+		"build": "electron-builder --config electron-builder.config.json"
+	},
+	"devDependencies": {
+		"electron": "^20.0.1",
+		"electron-builder": "^23.3.3"
+	},
+	"dependencies": {
+		"@nestjs-modules/mailer": "1.8.1",
+		"@nestjs/common": "9.0.11",
+		"@nestjs/config": "2.2.0",
+		"@nestjs/core": "9.0.11",
+		"@nestjs/jwt": "9.0.0",
+		"@nestjs/passport": "^9.0.0",
+		"@nestjs/platform-express": "9.0.11",
+		"@nestjs/serve-static": "^3.0.0",
+		"@nestjs/swagger": "6.0.5",
+		"@nestjs/typeorm": "9.0.1",
+		"apple-signin-auth": "1.7.4",
+		"aws-sdk": "2.1194.0",
+		"axios": "^0.27.2",
+		"bcryptjs": "2.4.3",
+		"cache-manager": "^4.1.0",
+		"class-transformer": "0.5.1",
+		"class-validator": "0.13.2",
+		"electron-log": "^4.4.8",
+		"electron-serve": "^1.1.0",
+		"fb": "2.0.0",
+		"google-auth-library": "8.4.0",
+		"handlebars": "4.7.7",
+		"md5": "^2.3.0",
+		"multer": "1.4.4",
+		"multer-s3": "2.10.0",
+		"nestjs-i18n": "9.1.6",
+		"nestjs-soap": "^3.0.0",
+		"nodemailer": "6.7.8",
+		"passport": "^0.6.0",
+		"passport-anonymous": "1.0.1",
+		"passport-headerapikey": "^1.2.2",
+		"passport-jwt": "4.0.0",
+		"pdf-to-printer": "^5.3.0",
+		"pg": "8.8.0",
+		"reflect-metadata": "0.1.13",
+		"rimraf": "3.0.2",
+		"rxjs": "7.5.6",
+		"source-map-support": "0.5.21",
+		"swagger-ui-express": "4.5.0",
+		"tar": "^6.1.11",
+		"tar-stream": "^2.2.0",
+		"twitter": "1.7.1",
+		"typeorm": "0.3.7",
+		"xml2js": "^0.4.23"
+	}
+}

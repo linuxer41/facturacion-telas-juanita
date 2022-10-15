@@ -1,0 +1,52 @@
+{
+	"asar": true,
+	"appId": "com.futuraworks.telas_juanita",
+	"productName": "Telas juanita",
+	"directories": { "output": "dist" },
+	"files": [
+		"main.cjs",
+		"preload.cjs",
+		"fonts.cjs",
+		{ "from": "client", "to": "client" },
+		{ "from": "server", "to": "server" }
+
+	],
+	"extraFiles": [
+		".env",
+		{ "from": "mail-templates", "to": "mail-templates" }
+	],
+	"mac": {
+		"category": "public.app-category.finance"
+	},
+	"dmg": {
+		"contents": [
+			{
+				"x": 110,
+				"y": 150
+			},
+			{
+				"x": 240,
+				"y": 150,
+				"type": "link",
+				"path": "/Applications"
+			}
+		]
+	},
+	"linux": {
+		"target": ["AppImage", "deb"]
+	},
+	"win": {
+		"target": [
+			{
+				"target": "nsis",
+				"arch": ["x64"]
+			}
+		],
+		"icon": "/icon.png"
+	},
+	"nsis": {
+		"deleteAppDataOnUninstall": true,
+		"oneClick": true,
+		"allowToChangeInstallationDirectory": false
+	}
+}

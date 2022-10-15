@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<facturaComputarizadaCompraVenta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd">
+  <cabecera>
+    <nitEmisor>4146960012</nitEmisor>
+    <razonSocialEmisor>FRANCO GUARACHI TAMARA</razonSocialEmisor>
+    <municipio>TARIJA</municipio>
+    <telefono>70560610</telefono>
+    <numeroFactura>38</numeroFactura>
+    <cuf>11BBF1BD45967C221C7CE39BC99FDA1BA1DC4BE7BC251010C8A9EC6D74</cuf>
+    <cufd>QUFVQjnCv09FQQ==MzVCRjY3NjM4QjY=Q8KhUmVKVEhKV1VBNzIxQTVBRTE1REMz</cufd>
+    <codigoSucursal>0</codigoSucursal>
+    <direccion>AVENIDA DOMINGO PAZ NRO.S/N ZONA EL MOLINO</direccion>
+    <codigoPuntoVenta>0</codigoPuntoVenta>
+    <fechaEmision>2022-09-06T19:10:38.119</fechaEmision>
+    <nombreRazonSocial>CONTROL TRIBUTARIO</nombreRazonSocial>
+    <codigoTipoDocumentoIdentidad>1</codigoTipoDocumentoIdentidad>
+    <numeroDocumento>99002</numeroDocumento>
+    <complemento xsi:nil="true"/>
+    <codigoCliente>1</codigoCliente>
+    <codigoMetodoPago>1</codigoMetodoPago>
+    <numeroTarjeta>0</numeroTarjeta>
+    <montoTotal>45</montoTotal>
+    <montoTotalSujetoIva>45</montoTotalSujetoIva>
+    <codigoMoneda>1</codigoMoneda>
+    <tipoCambio>1</tipoCambio>
+    <montoTotalMoneda>45</montoTotalMoneda>
+    <montoGiftCard>0</montoGiftCard>
+    <descuentoAdicional>0</descuentoAdicional>
+    <codigoExcepcion>0</codigoExcepcion>
+    <cafc xsi:nil="true"/>
+    <leyenda>Ley N° 453: Tienes derecho a recibir información sobre las características y contenidos de los productos que consumes.</leyenda>
+    <usuario>Tamara</usuario>
+    <codigoDocumentoSector>1</codigoDocumentoSector>
+  </cabecera>
+  <detalle>
+    <actividadEconomica>475100</actividadEconomica>
+    <codigoProductoSin>62131</codigoProductoSin>
+    <codigoProducto>dhakjjkl</codigoProducto>
+    <descripcion>TELS</descripcion>
+    <cantidad>1</cantidad>
+    <unidadMedida>30</unidadMedida>
+    <precioUnitario>45</precioUnitario>
+    <montoDescuento>0</montoDescuento>
+    <subTotal>45</subTotal>
+    <numeroSerie xsi:nil="true"/>
+    <numeroImei xsi:nil="true"/>
+  </detalle>
+</facturaComputarizadaCompraVenta>

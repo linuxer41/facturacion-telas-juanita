@@ -1,0 +1,29 @@
+table {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+	// height: 100%;
+	// border: 1px solid #ddd;
+	tr {
+		height: 1px;
+	}
+	// focused tr
+	// tr:focus{
+	//
+	// }
+	// tr:hover
+	tr:hover {
+		background-color: rgb(198, 230, 230);
+		cursor: pointer;
+	}
+	th {
+		background-color: #f5f5f5;
+		text-align: start;
+		padding: 0.5rem;
+	}
+	td {
+		height: 1px;
+		text-align: start;
+		padding: 0.5rem;
+	}
+}

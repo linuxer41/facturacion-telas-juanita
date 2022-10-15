@@ -1,0 +1,32 @@
+form {
+	// padding: 0.5rem;
+	height: auto;
+	overflow: auto;
+	width: 100%;
+	@media screen and (max-width: 765px) {
+		width: 100%;
+	}
+	justify-self: center;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.5rem;
+	grid-auto-rows: min-content;
+	> div {
+		display: grid;
+		grid-auto-flow: column;
+		gap: 1rem;
+	}
+	.info {
+		display: flex;
+		place-content: flex-end;
+		b {
+			opacity: 0.66;
+			font-size: 0.8rem;
+			font-weight: 200;
+		}
+		span {
+			color: var(--error-color);
+			font-size: 1.2rem;
+		}
+	}
+}

@@ -1,0 +1,32 @@
+export declare class FacturaCompraVentaCabeceraDTO {
+    nitEmisor: number;
+    razonSocialEmisor: string;
+    municipio: string;
+    telefono: string;
+    numeroFactura: number;
+    cuf: string;
+    cufd: string;
+    codigoSucursal: number;
+    direccion: string;
+    codigoPuntoVenta: number;
+    fechaEmision: string;
+    nombreRazonSocial: string;
+    codigoTipoDocumentoIdentidad: number;
+    numeroDocumento: string;
+    complemento: string;
+    codigoCliente: string;
+    codigoMetodoPago: number;
+    numeroTarjeta: number;
+    montoTotal: number;
+    montoTotalSujetoIva: number;
+    codigoMoneda: number;
+    tipoCambio: number;
+    montoTotalMoneda: number;
+    montoGiftCard: number;
+    descuentoAdicional: number;
+    codigoExcepcion: number;
+    cafc: string;
+    leyenda: string;
+    usuario: string;
+    codigoDocumentoSector: number;
+}

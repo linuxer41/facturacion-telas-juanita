@@ -1,0 +1,43 @@
+.field {
+	display: grid;
+	grid-template-columns: 1fr;
+	position: relative;
+	gap: 0.5rem;
+	.label {
+		height: 1rem;
+	}
+	.data {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.5rem;
+		position: relative;
+	}
+
+	.input {
+		display: grid;
+		grid-template-columns: 1fr;
+		place-content: start;
+		width: 100%;
+		position: relative;
+		border-bottom: 2px solid var(--border-color);
+
+		input {
+			padding: 0 !important;
+			width: 100%;
+			border: none;
+			appearance: none;
+		}
+	}
+	.placeholder {
+		position: absolute;
+		opacity: 0.5;
+	}
+}
+.focused {
+	border-bottom: 2px solid var(--primary-color) !important;
+}
+.info {
+	position: absolute;
+	right: 0;
+	top: 0;
+}

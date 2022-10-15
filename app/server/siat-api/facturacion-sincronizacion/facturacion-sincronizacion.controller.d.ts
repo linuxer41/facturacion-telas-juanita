@@ -1,0 +1,32 @@
+import { AppCrediantialDto, VerificarComunicacionDto } from 'src/decorators/global.decorator';
+import { FacturacionSincronizacionService } from './facturacion-sincronizacion.service';
+import { RespuestaFechaHoraDTO } from './dto/RespuestaFechaHora.dto';
+import { RespuestaListaActividadesDTO } from './dto/RespuestaListaActividades.dto';
+import { RespuestaListaParametricasDTO } from './dto/RespuestaListaParametricas.dto';
+import { RespuestaListaParametricasLeyendasDTO } from './dto/RespuestaListaParametricasLeyendas.dto';
+import { RespuestaListaProductosDTO } from './dto/RespuestaListaProductos.dto';
+import { ReturnDTO } from './dto/Return.dto';
+import { SolicitudSincronizacionDTO } from './dto/SolicitudSincronizacion.dto';
+export declare class FacturacionSincronizacionController {
+    private readonly facturacionSincronizacionService;
+    constructor(facturacionSincronizacionService: FacturacionSincronizacionService);
+    sincronizarParametricaMotivoAnulacion(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarActividades(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaActividadesDTO>;
+    sincronizarFechaHora(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaFechaHoraDTO>;
+    sincronizarListaLeyendasFactura(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasLeyendasDTO>;
+    sincronizarParametricaTipoHabitacion(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarListaActividadesDocumentoSector(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<import("../../siap-soap/FacturacionSincronizacion").RespuestaListaParametricas>;
+    sincronizarParametricaTipoDocumentoIdentidad(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaUnidadMedida(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaTipoDocumentoSector(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaTiposFactura(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    verificarComunicacion(credential: AppCrediantialDto, solicitud: VerificarComunicacionDto): Promise<ReturnDTO>;
+    sincronizarListaMensajesServicios(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaTipoMetodoPago(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaEventosSignificativos(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaTipoPuntoVenta(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarListaProductosServicios(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaProductosDTO>;
+    sincronizarParametricaTipoEmision(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaPaisOrigen(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+    sincronizarParametricaTipoMoneda(credential: AppCrediantialDto, solicitud: SolicitudSincronizacionDTO): Promise<RespuestaListaParametricasDTO>;
+}
