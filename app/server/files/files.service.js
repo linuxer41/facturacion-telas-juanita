@@ -24,7 +24,6 @@ let FilesService = class FilesService {
         this.fileRepository = fileRepository;
     }
     async uploadFile(file) {
-        console.log(file);
         if (!file) {
             throw new common_1.HttpException({
                 status: common_1.HttpStatus.UNPROCESSABLE_ENTITY,

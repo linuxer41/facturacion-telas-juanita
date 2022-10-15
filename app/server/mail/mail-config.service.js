@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MailConfigService = void 0;
-const path = require("path");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
+const path_1 = require("path");
 let MailConfigService = class MailConfigService {
     constructor(configService) {
         this.configService = configService;
@@ -35,7 +35,7 @@ let MailConfigService = class MailConfigService {
                 from: `"${this.configService.get('mail.defaultName')}" <${this.configService.get('mail.defaultEmail')}>`,
             },
             template: {
-                dir: path.join(this.configService.get('app.workingDirectory'), 'src', 'mail', 'mail-templates'),
+                dir: (0, path_1.resolve)('.', 'mail-templates'),
                 adapter: new handlebars_adapter_1.HandlebarsAdapter(),
                 options: {
                     strict: true,

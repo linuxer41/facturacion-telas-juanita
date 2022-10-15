@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loadAllLists, loadStore } from '$lib/core/globals';
+	import { loadAllLists, loadStore, parametricaEventosSignificativos } from '$lib/core/globals';
 	import { snackBar } from '$lib/core/store';
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
@@ -12,6 +12,12 @@
 		await loadCuis();
 		await loadCufd();
 		loadAllLists();
+		// run loadAllLists() again every 5 minutes if parametricaEventosSignificativos lenqth is 0
+		setInterval(() => {
+			if ((parametricaEventosSignificativos || []).length === 0) {
+				loadAllLists();
+			}
+		}, 15000);
 		// select all imput execpt the email, password and submit type
 		const inputs = document.querySelectorAll('input:not([type="submit"]):not([type="email"]):not([type="password"])');
 		// document.querySelector('input')?.addEventListener('input', function (event) {
