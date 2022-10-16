@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { user } from '$lib/core/store';
 	const routes = [
 		{
 			path: '/',
@@ -36,6 +37,9 @@
 			label: 'Configuración'
 		}
 	];
+	if(!($user?.role?.name == 'admin')){
+		routes.splice(4,1);
+	}
 </script>
 
 <main>
@@ -44,7 +48,7 @@
 	</div>
 	<div class="toolbar">
 		{#each routes as route}
-			<div on:click={async()=>await goto(route.path)} class:active={$page.url.pathname === route.path}>
+			<div class="link" on:click={async()=>await goto(route.path)} class:active={$page.url.pathname === route.path}>
 				{route.label}
 			</div>
 		{/each}
@@ -99,7 +103,7 @@
 			place-items: center;
 			padding: 0.5rem;
 			gap: 0.5rem;
-			a {
+			.link {
 				padding: 0.5rem 1rem;
 				text-decoration: none;
 				box-shadow: var(--box-shadow-main);
@@ -107,6 +111,7 @@
 				border-radius: 20px;
 				text-align: center;
 				font-size: larger;
+				cursor: pointer;
 			}
 			.active {
 				background-color: var(--primary-color);

@@ -13,7 +13,7 @@ export declare class AuthService {
     private forgotService;
     private mailService;
     constructor(jwtService: JwtService, usersService: UsersService, forgotService: ForgotService, mailService: MailService);
-    validateLogin(loginDto: AuthEmailLoginDto, onlyAdmin: boolean): Promise<{
+    validateLogin(loginDto: AuthEmailLoginDto): Promise<{
         token: string;
         user: User;
     }>;

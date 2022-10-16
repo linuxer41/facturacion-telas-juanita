@@ -31,13 +31,11 @@ let AuthService = class AuthService {
         this.forgotService = forgotService;
         this.mailService = mailService;
     }
-    async validateLogin(loginDto, onlyAdmin) {
+    async validateLogin(loginDto) {
         const user = await this.usersService.findOne({
             email: loginDto.email,
         });
-        if (!user ||
-            (user &&
-                !(onlyAdmin ? [roles_enum_1.RoleEnum.admin] : [roles_enum_1.RoleEnum.user]).includes(user.role.id))) {
+        if (!user) {
             throw new common_1.HttpException({
                 status: common_1.HttpStatus.UNPROCESSABLE_ENTITY,
                 errors: {

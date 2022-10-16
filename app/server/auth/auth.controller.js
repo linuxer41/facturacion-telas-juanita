@@ -28,10 +28,10 @@ let AuthController = class AuthController {
         this.service = service;
     }
     async login(loginDto) {
-        return this.service.validateLogin(loginDto, false);
+        return this.service.validateLogin(loginDto);
     }
     async adminLogin(loginDTO) {
-        return this.service.validateLogin(loginDTO, true);
+        return this.service.validateLogin(loginDTO);
     }
     async register(createUserDto) {
         return this.service.register(createUserDto);

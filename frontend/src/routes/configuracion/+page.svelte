@@ -116,7 +116,7 @@ import Modal from '$lib/components/common/Modal.svelte';
 		<h3>Configuraciones</h3>
 		<div class="tools">
 			<button class="logout" on:click={()=>window.location.reload()}>
-				Actualizar
+				Refrescar
 			</button>
 			<button class="logout" on:click={()=>logout()}>
 				Cerrar sesión

@@ -7,6 +7,7 @@
 	import FormModal from './components/FormModal.svelte';
 	import EmailInput from './inputs/EmailInput.svelte';
 	import NativeInput from './inputs/NativeInput.svelte';
+	import PasswordInput from './inputs/PasswordInput.svelte';
 	export let title = 'Nuevo cliente';
 	export let update = false;
 	export let data: Usuario & { password: string, roleId: number } = {} as any;
@@ -83,7 +84,7 @@
 			<EmailInput bind:value={data.email} label="Correo" />
 		</div>
 		<div>
-			<NativeInput bind:value={data.password} label="Contrasenia" description="" />
+			<PasswordInput bind:value={data.password} label="Contraseña" />
 		</div>
 		<div>
 			<NativeInput bind:value={data.firstName} label="Nombre" description="" />

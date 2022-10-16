@@ -628,8 +628,8 @@
 	{#if presentation === 'roll'}
 		<style>
 			@page {
-				margin-left: 2.5mm;
-				margin-right: 2.5mm;
+				margin-left: 5mm;
+				margin-right: 5mm;
 				margin-top: 0mm;
 				margin-bottom: 0mm;
 				padding: 0px;
