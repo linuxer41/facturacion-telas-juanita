@@ -1,5 +1,6 @@
 <script>
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	const routes = [
 		{
 			path: '/',
@@ -43,9 +44,9 @@
 	</div>
 	<div class="toolbar">
 		{#each routes as route}
-			<a href={route.path} class:active={$page.url.pathname === route.path}>
+			<div on:click={async()=>await goto(route.path)} class:active={$page.url.pathname === route.path}>
 				{route.label}
-			</a>
+			</div>
 		{/each}
 	</div>
 	<!-- <div class="iframe">
