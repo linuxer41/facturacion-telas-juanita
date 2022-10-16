@@ -136,7 +136,7 @@ const storeCarts = syncWritable<Cart[]>(null, 'carts');
 // nit
 // cosidgoActividadEconomica
 // codigoTipoEmision,
-const codigoPuntoVenta = syncWritable<number>(1, 'codigoPuntoVenta');
+const codigoPuntoVenta = syncWritable<number>(0, 'codigoPuntoVenta');
 const codigoSucursal = syncWritable<number>(0, 'codigoSucursal');
 const codigoAmbiente = syncWritable<number>(2, 'codigoAmbiente');
 const codigoSistema = syncWritable<string>(codigoSistemaConstant, 'codigoSistema');
