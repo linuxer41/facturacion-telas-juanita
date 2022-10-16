@@ -10,13 +10,14 @@ const app_module_1 = require("./app.module");
 const serializer_interceptor_1 = require("./utils/serializer.interceptor");
 const validation_options_1 = require("./utils/validation-options");
 const fs_1 = require("fs");
+const path_1 = require("path");
 async function bootstrap() {
-    (0, fs_1.mkdirSync)('./files/invoices', { recursive: true });
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
         cors: true,
     });
     (0, class_validator_1.useContainer)(app.select(app_module_1.AppModule), { fallbackOnErrors: true });
     const configService = app.get(config_1.ConfigService);
+    (0, fs_1.mkdirSync)((0, path_1.resolve)(configService.get('file.filesLocationDir') || '.', 'files/facturas'), { recursive: true });
     app.enableShutdownHooks();
     app.setGlobalPrefix(configService.get('app.apiPrefix'), {
         exclude: ['/'],

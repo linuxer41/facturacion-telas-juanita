@@ -98,7 +98,7 @@ AppModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.resolve)('.', 'files'),
+                rootPath: (0, path_1.resolve)((0, file_config_1.default)().filesLocationDir || '.', 'files'),
                 serveRoot: '/files',
             }),
             users_module_1.UsersModule,

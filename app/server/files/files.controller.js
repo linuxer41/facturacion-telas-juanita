@@ -19,6 +19,7 @@ const swagger_1 = require("@nestjs/swagger");
 const passport_1 = require("@nestjs/passport");
 const files_service_1 = require("./files.service");
 const multer_1 = require("multer");
+const path_1 = require("path");
 let FilesController = class FilesController {
     constructor(filesService) {
         this.filesService = filesService;
@@ -28,10 +29,12 @@ let FilesController = class FilesController {
     }
     async uploadPdf(files) {
         files = files.map((file) => {
-            return Object.assign(Object.assign({}, file), { path: file.path.replace(/\\/g, '/') });
+            return Object.assign(Object.assign({}, file), { path: file.path
+                    .replace(process.env.FILES_LOCATION_DIR || '.', '')
+                    .replace(/\\/g, '/')
+                    .replace(process.env.FILES_LOCATION_DIR || '.', '') });
         });
         for (const file of files) {
-            console.log('file', file);
             await this.filesService.uploadFile(file);
         }
         return files;
@@ -92,7 +95,7 @@ __decorate([
         },
         storage: (0, multer_1.diskStorage)({
             destination: (req, file, cb) => {
-                cb(null, './files/invoices');
+                cb(null, (0, path_1.resolve)(process.env.FILES_LOCATION_DIR || '.', 'files/facturas'));
             },
             filename: (req, file, cb) => {
                 cb(null, file.originalname);

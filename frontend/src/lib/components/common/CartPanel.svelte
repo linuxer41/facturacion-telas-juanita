@@ -318,7 +318,7 @@
 		// 	event.target.value = event.target.value.toLocaleUpperCase();
 		// });
 		inputs?.forEach((input) => {
-			input.addEventListener('input', function (event) {
+			input.addEventListener('keyup', function (event) {
 				event.target.value = event.target.value.toLocaleUpperCase();
 			});
 		});
@@ -504,11 +504,11 @@
 			</label>
 			<label for="cliente">
 				Cliente:
-				<input type="text" bind:value={cart.cliente.name} />
+				<input type="text" bind:value={cart.cliente.name} on:keyup={(e)=>cart.cliente.name=e.currentTarget.value.toLocaleUpperCase()} />
 			</label>
-			<label for="mail">
+			<label for="email">
 				Correo:
-				<input type="mail" bind:value={cart.cliente.email} />
+				<input type="email" bind:value={cart.cliente.email} />
 			</label>
 		</div>
 		<div class="tools">

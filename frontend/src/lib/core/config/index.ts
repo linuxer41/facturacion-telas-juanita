@@ -1,5 +1,6 @@
 export const SETTINGS = {
 	apiUrl: 'http://localhost:3000/api',
+	// apiUrl: 'http://localhost:3000/api',
 	siatApiKey:
 		'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJGcmFuY28wMTIiLCJjb2RpZ29TaXN0ZW1hIjoiNzIxQTVBRTE1REMzMzVCRjY3NjM4QjYiLCJuaXQiOiJINHNJQUFBQUFBQUFBRE14TkRHek5ETXdNRFFDQUFvRE1xWUtBQUFBIiwiaWQiOjQ5MDUxNCwiZXhwIjoxNjkwNTg4ODAwLCJpYXQiOjE2NTkwNzI1NTQsIm5pdERlbGVnYWRvIjo0MTQ2OTYwMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.1joGHujUq470w59si0gRqaw4fkfd13QkBOOOETtw1dKDYA7ZH7JreZMHyYBiAWB2chVntnwx-x4ezNFBT1NQdw',
 	siatApiUrl: 'http://localhost:3000/api'

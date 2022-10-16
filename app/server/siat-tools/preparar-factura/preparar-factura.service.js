@@ -23,12 +23,14 @@ const passport_headerapikey_1 = require("passport-headerapikey");
 const mail_service_1 = require("../../mail/mail.service");
 const clientes_service_1 = require("../../clientes/clientes.service");
 const path_1 = require("path");
+const config_1 = require("@nestjs/config");
 let PrepararFacturaService = class PrepararFacturaService {
-    constructor(facturasService, facturacionOperacionesService, mailService, clientesService, servicioFacturacionCompraVentaService) {
+    constructor(facturasService, facturacionOperacionesService, mailService, clientesService, configService, servicioFacturacionCompraVentaService) {
         this.facturasService = facturasService;
         this.facturacionOperacionesService = facturacionOperacionesService;
         this.mailService = mailService;
         this.clientesService = clientesService;
+        this.configService = configService;
         this.servicioFacturacionCompraVentaService = servicioFacturacionCompraVentaService;
     }
     async facturaCompraVenta(data) {
@@ -70,7 +72,7 @@ let PrepararFacturaService = class PrepararFacturaService {
         facturas.forEach((factura) => {
             tarball.entry({
                 name: `factura_${factura.numero}.xml`,
-            }, fs.readFileSync((0, path_1.resolve)('.', `${factura.xml}`)));
+            }, fs.readFileSync((0, path_1.resolve)(this.configService.get('file.filesLocationDir'), `${factura.xml}`)));
         });
         tarball.finalize();
         const tarballBuffer = tarball.read();
@@ -188,6 +190,7 @@ PrepararFacturaService = __decorate([
         facturacion_operaciones_service_1.FacturacionOperacionesService,
         mail_service_1.MailService,
         clientes_service_1.ClientesService,
+        config_1.ConfigService,
         servicio_facturacion_compra_venta_service_1.ServicioFacturacionCompraVentaService])
 ], PrepararFacturaService);
 exports.PrepararFacturaService = PrepararFacturaService;

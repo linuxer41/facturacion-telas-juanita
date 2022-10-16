@@ -8,13 +8,15 @@ import { MailService } from 'src/mail/mail.service';
 import { SolicitudEnviarEmailFacturaDTO } from './dto/SolicitudEnviarEmailFactura';
 import { ClientesService } from 'src/clientes/clientes.service';
 import { SolicitudAnularEmailFacturaDTO } from './dto/SolicitudAnularEmailFactura.dto';
+import { ConfigService } from '@nestjs/config';
 export declare class PrepararFacturaService {
     private facturasService;
     private facturacionOperacionesService;
     private mailService;
     private clientesService;
+    private configService;
     private servicioFacturacionCompraVentaService;
-    constructor(facturasService: FacturasService, facturacionOperacionesService: FacturacionOperacionesService, mailService: MailService, clientesService: ClientesService, servicioFacturacionCompraVentaService: ServicioFacturacionCompraVentaService);
+    constructor(facturasService: FacturasService, facturacionOperacionesService: FacturacionOperacionesService, mailService: MailService, clientesService: ClientesService, configService: ConfigService, servicioFacturacionCompraVentaService: ServicioFacturacionCompraVentaService);
     facturaCompraVenta(data: FacturaCompraVentaDTO): Promise<{
         tipoDocumento: string;
         json: unknown;

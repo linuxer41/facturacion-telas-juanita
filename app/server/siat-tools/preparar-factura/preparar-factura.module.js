@@ -17,6 +17,7 @@ const facturacion_operaciones_module_1 = require("../../siat-api/facturacion-ope
 const servicio_facturacion_compra_venta_module_1 = require("../../siat-api/servicio-facturacion-compra-venta/servicio-facturacion-compra-venta.module");
 const mail_module_1 = require("../../mail/mail.module");
 const clientes_module_1 = require("../../clientes/clientes.module");
+const config_1 = require("@nestjs/config");
 let PrepararFacturaModule = class PrepararFacturaModule {
 };
 PrepararFacturaModule = __decorate([
@@ -30,6 +31,7 @@ PrepararFacturaModule = __decorate([
             servicio_facturacion_compra_venta_module_1.ServicioFacturacionCompraVentaModule,
             mail_module_1.MailModule,
             clientes_module_1.ClientesModule,
+            config_1.ConfigModule,
         ],
     })
 ], PrepararFacturaModule);

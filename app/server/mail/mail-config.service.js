@@ -35,7 +35,7 @@ let MailConfigService = class MailConfigService {
                 from: `"${this.configService.get('mail.defaultName')}" <${this.configService.get('mail.defaultEmail')}>`,
             },
             template: {
-                dir: (0, path_1.resolve)('.', 'mail-templates'),
+                dir: (0, path_1.resolve)(this.configService.get('mail.templatesDir') || '.', 'mail-templates'),
                 adapter: new handlebars_adapter_1.HandlebarsAdapter(),
                 options: {
                     strict: true,

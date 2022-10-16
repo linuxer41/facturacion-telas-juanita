@@ -8,6 +8,7 @@ declare const _default: (() => {
     ignoreTLS: boolean;
     secure: boolean;
     requireTLS: boolean;
+    templatesDir: string;
 }) & import("@nestjs/config").ConfigFactoryKeyHost<{
     port: number;
     host: string;
@@ -18,5 +19,6 @@ declare const _default: (() => {
     ignoreTLS: boolean;
     secure: boolean;
     requireTLS: boolean;
+    templatesDir: string;
 }>;
 export default _default;

@@ -11,5 +11,6 @@ exports.default = (0, config_1.registerAs)('mail', () => ({
     ignoreTLS: process.env.MAIL_IGNORE_TLS === 'true',
     secure: process.env.MAIL_SECURE === 'true',
     requireTLS: process.env.MAIL_REQUIRE_TLS === 'true',
+    templatesDir: process.env.MAIL_TEMPLATES_DIR,
 }));
 //# sourceMappingURL=mail.config.js.map

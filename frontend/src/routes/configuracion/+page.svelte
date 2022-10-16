@@ -114,9 +114,15 @@ import Modal from '$lib/components/common/Modal.svelte';
 <div class="route">
 	<div class="head">
 		<h3>Configuraciones</h3>
-		<button class="logout" on:click={()=>logout()}>
-			Cerrar sesión
-		</button>
+		<div class="tools">
+			<button class="logout" on:click={()=>window.location.reload()}>
+				Actualizar
+			</button>
+			<button class="logout" on:click={()=>logout()}>
+				Cerrar sesión
+			</button>
+		</div>
+
 	</div>
 	<div class="content">
 		<div class="item">
@@ -367,6 +373,13 @@ import Modal from '$lib/components/common/Modal.svelte';
 		grid-template-columns: 1fr auto;
 		align-items: center;
 		justify-content: space-between;
+		.tools{
+			display: grid;
+			grid-auto-flow: column;
+			gap: 0.5rem;
+			align-items: center;
+			justify-content: end;
+		}
 		button{
         background-color: #000;
         color: #fff;
@@ -374,6 +387,7 @@ import Modal from '$lib/components/common/Modal.svelte';
         padding: 0.5rem;
         border-radius: 0.25rem;
         cursor: pointer;
+
       }
 	}
 	.modal {

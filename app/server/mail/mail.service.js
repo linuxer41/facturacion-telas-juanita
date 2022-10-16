@@ -77,12 +77,12 @@ let MailService = class MailService {
             attachments: [
                 {
                     filename: `factura_${mailData.data.numero}.pdf`,
-                    path: (0, path_1.resolve)('.', mailData.data.pdf),
+                    path: (0, path_1.resolve)(this.configService.get('file.filesLocationDir'), mailData.data.pdf),
                     contentType: 'application/pdf',
                 },
                 {
                     filename: `factura_${mailData.data.numero}.xml`,
-                    path: (0, path_1.resolve)('.', mailData.data.xml),
+                    path: (0, path_1.resolve)(this.configService.get('file.filesLocationDir'), mailData.data.xml),
                     contentType: 'application/xml',
                 },
             ],
