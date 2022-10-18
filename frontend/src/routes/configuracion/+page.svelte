@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import InfinitySpinner from '$lib/components/common/InfinitySpinner.svelte';
 import Modal from '$lib/components/common/Modal.svelte';
-	import { registrarEvento, validarFacturas } from '$lib/core/api_tools';
+	import { loadCufd, loadCuis, registrarEvento, validarFacturas } from '$lib/core/api_tools';
 	import { ambientesFacturacion, modalidadesFacturacion, tiposEmision } from '$lib/core/constants';
 	import {
 		actividades,
+		loadAllLists,
 		parametricaEventosSignificativos,
 		parametricaTipoDocumentoSector,
 		parametricaTipoEmision,
@@ -109,14 +110,32 @@ import Modal from '$lib/components/common/Modal.svelte';
 		authToken.flush();
 		goto('/auth');
 	}
+	async function reset() {
+		const _punto = $codigoPuntoVenta
+		const _sucursal = $codigoSucursal
+		localStorage.clear();
+		// reset stores
+
+
+	
+
+		// reset globals
+		codigoPuntoVenta.sync(_punto)
+		codigoSucursal.sync(_sucursal)
+		window.location.reload()
+		// await loadCuis();
+		// await loadCufd();
+		// await loadAllLists();
+		
+	}
 </script>
 
 <div class="route">
 	<div class="head">
 		<h3>Configuraciones</h3>
 		<div class="tools">
-			<button class="logout" on:click={()=>window.location.reload()}>
-				Refrescar
+			<button class="logout" on:click={async()=>await reset()}>
+				Reset
 			</button>
 			<button class="logout" on:click={()=>logout()}>
 				Cerrar sesión
@@ -201,22 +220,35 @@ import Modal from '$lib/components/common/Modal.svelte';
 		<div class="item">
 			<h4>Facturacion</h4>
 
-			<!-- <div>
-				<label for="codigoPuntoVenta">Codigo punto de venta</label>
-				<input
-					type="text"
-					value={$codigoPuntoVenta}
-					on:change={(e) => codigoPuntoVenta.sync(Number(e.currentTarget.value))}
-				/>
-			</div>
+
 			<div>
 				<label for="codigoSucursal">Codigo sucursal</label>
 				<input
-					type="text"
+					type="number"
 					value={$codigoSucursal}
-					on:change={(e) => codigoSucursal.sync(Number(e.currentTarget.value))}
+					on:keyup={async (e) => {
+						codigoSucursal.sync(Number(e.currentTarget.value))
+						await loadCuis();
+						await loadCufd();
+						await loadAllLists();
+						
+					}}
 				/>
-			</div> -->
+			</div>
+			<div>
+				<label for="codigoPuntoVenta">Codigo punto de venta</label>
+				<input
+					type="number"
+					value={$codigoPuntoVenta}
+					on:keyup={async (e) => {
+						codigoPuntoVenta.sync(Number(e.currentTarget.value))
+						await loadCuis();
+						await loadCufd();
+						await loadAllLists();
+						
+					}}
+				/>
+			</div>
 			<div>
 				<label for="codigoAmbiente">Codigo ambiente</label>
 				<select

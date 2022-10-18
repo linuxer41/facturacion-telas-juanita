@@ -25,10 +25,6 @@
 			label: 'Clientes'
 		},
 		{
-			path: '/usuarios',
-			label: 'Usuarios'
-		},
-		{
 			path: '/contingencia',
 			label: 'Contingencia'
 		},
@@ -37,8 +33,13 @@
 			label: 'Configuración'
 		}
 	];
-	if(!($user?.role?.name == 'admin')){
-		routes.splice(4,1);
+	if(($user?.role?.id === 1)){
+		// append to 4 position
+		routes.splice(4, 0, {
+			path: '/usuarios',
+			label: 'Usuarios'
+		});
+		// routes.splice(4,1);
 	}
 </script>
 
