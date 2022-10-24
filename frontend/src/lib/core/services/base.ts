@@ -1,4 +1,6 @@
+import { get } from 'svelte/store';
 import { SETTINGS } from '../config';
+import { authToken, siatApiKey } from '../store';
 import { toQueryString } from '../utils';
 
 export class BaseService {
@@ -9,8 +11,8 @@ export class BaseService {
 		return await fetch(`${this.base_url}${this.location ? '/' + this.location : ''}${last_patch}`, {
 			headers: {
 				'Content-Type': 'application/json',
-				siat_api_key: SETTINGS.siatApiKey,
-				'Authorization': `Bearer `+localStorage.getItem('token')
+				siat_api_key: get(siatApiKey),
+				'Authorization': `Bearer `+get(authToken)
 			},
 			method: method,
 			body: data ? JSON.stringify(data) : null

@@ -3,7 +3,7 @@
 	import { getIcon } from '$lib/core/icons';
 	import { facturaService } from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
-	import { b64toBlob, bloToUrl, formatCurrency, formatDateTime, onInvoiceReady } from '$lib/core/utils';
+	import { formatCurrency, formatDateTime, getDateRanges, onInvoiceReady } from '$lib/core/utils';
 	import { onMount } from 'svelte';
 	import DocumentRenderer from '../common/DocumentRenderer.svelte';
 	import Search from '../common/Search.svelte';
@@ -15,9 +15,9 @@
 	export let contact_type_code = 'CUSTOMER';
 	export let title = 'Reporte de Facturas';
 	let _filter_obj = {
-		_from: null,
-		_to: null,
-		_period: null
+		_from: null as Date,
+		_to: null as Date,
+		_period: null as string
 	};
 
 	let limit = 50;
@@ -80,6 +80,23 @@
 		}
 	}
 
+	function getPeriodDates(fileter: typeof _filter_obj){
+		if(fileter._period){
+			const ranges = getDateRanges();
+			const range = ranges.find(r => r.key === fileter._period);
+			if(range){
+				return {
+					desde: (range.range[0]).toISOString(),
+					hasta: (range.range[1]).toISOString()
+				}
+			}
+		}
+		return {
+			desde: (fileter._from)?.toISOString(),
+			hasta: (fileter._to)?.toISOString()
+		}
+	}
+
 	async function _load() {
 		try {
 			const response = await facturaService.query({
@@ -88,8 +105,9 @@
 				sorting,
 				clientName: keyword,
 				cuf: keyword,
-				tipoEmision: 'EN LINEA',
-				..._filter_obj
+				// tipoEmision: 'EN LINEA',
+				estado: 'VALIDADA',
+				...getPeriodDates(_filter_obj)
 			});
 			if (response.status === 200) {
 				const _resData = await response.json();
@@ -99,6 +117,7 @@
 				console.log(await response.text());
 			}
 		} catch (error) {
+			console.log(error);
 			snackBar.show('Error al cargar los datos');
 		}
 	}
@@ -136,7 +155,7 @@
 
 <div class="report">
 	<div class="top">
-		<ReportTopbar {title} on:close on:export={onExport} on:filter={() => (show_filter = true)} />
+		<ReportTopbar {title} on:close on:export={onExport} on:filter={() => (show_filter = true)} showTools />
 		<div class="info">
 			<Search {keyword} placeholder="Buscar por cliente o CUF" on:search={onSearch} />
 			<p class="total_info">
@@ -154,6 +173,7 @@
 						<th>Cliente</th>
 						<th>Monto</th>
 						<th>Estado</th>
+						<th>Usuario</th>
 						<th>CUF</th>
 						<th>Acciones</th>
 					</tr>
@@ -166,6 +186,7 @@
 							<td>{item.clientName || 'Sin nombre'}</td>
 							<td>{formatCurrency(item.total || 0)}</td>
 							<td>{item.estado}</td>
+							<td>{item.user?.firstName || ''}</td>
 							<td>{item.cuf}</td>
 							<td class="actions">
 								<div class="icons">
@@ -226,6 +247,7 @@
 		{_filter_obj}
 		on:filter={(e) => {
 			_filter_obj = e.detail;
+			_load();
 			show_filter = false;
 		}}
 	/>

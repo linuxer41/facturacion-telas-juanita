@@ -11,7 +11,7 @@
 	export let data: Usuario;
 	export let isEditing = false;
 	if (!data) data = {} as any;
-	const clone = { ...data };
+	const cloned = { ...data };
 
 	let targetForm: HTMLFormElement;
 
@@ -30,12 +30,11 @@
 		try {
 			// get modified object
 			const modified = Object.keys(minified).reduce((acc, key) => {
-				if (clone[key] !== minified[key]) {
+				if (cloned[key] !== minified[key]) {
 					acc[key] = minified[key];
 				}
 				return acc;
 			}, {});
-			console.log({modified});
 
 
 			const response = await usuarioService.patch(minified.id, modified);
@@ -84,9 +83,9 @@
 >
 	<form action="javascript:void(0);" bind:this={targetForm}>
 
-		<div>
+		<!-- <div>
 			<EmailInput bind:value={data.email} label="Correo" />
-		</div>
+		</div> -->
 
 		<div>
 			<NativeInput bind:value={data.firstName} label="Nombre" description="" />

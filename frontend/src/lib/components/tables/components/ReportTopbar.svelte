@@ -7,6 +7,7 @@
 	import ExportReportModal from './ExportReportModal.svelte';
 	export let title = '';
 	export let filterCount = 0;
+	export let showTools = false;
 	const dispatch = createEventDispatcher();
 	let showExportModal = false;
 </script>
@@ -14,8 +15,10 @@
 <div class="topbar">
 	<TitleBar icon="ChevronLeft" {title} on:close={() => goto('/')} />
 	<div class="icons">
+		{#if showTools}
 		<FilterButton {filterCount} on:click={() => dispatch('filter')} />
 		<ActionIcon name="ArrowDown" icon_type="primary" on:click={() => (showExportModal = true)} />
+			{/if}
 	</div>
 </div>
 {#if showExportModal}

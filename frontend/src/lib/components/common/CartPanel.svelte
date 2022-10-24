@@ -214,7 +214,8 @@
 				if (!facturaResponse.ok) {
 					throw new Error("Error al actualizar la factura");
 				}
-				const response = await facturacionPrepararFacturaService.enviarEmailFactura({
+				// no esperar a que se suba el archivo
+				facturacionPrepararFacturaService.enviarEmailFactura({
 					idFactura: toRenderDocument.id,
 					email: cart?.cliente?.email || ''
 				});

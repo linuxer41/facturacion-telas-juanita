@@ -35,7 +35,8 @@ import Modal from '$lib/components/common/Modal.svelte';
 		snackBar,
 		facturacionFueraDeLinea,
 		user,
-		authToken
+		authToken,
+		siatApiKey
 	} from '$lib/core/store';
 	import { onMount } from 'svelte';
 	let showModal = false;
@@ -219,8 +220,17 @@ import Modal from '$lib/components/common/Modal.svelte';
 		</div>
 		<div class="item">
 			<h4>Facturacion</h4>
-
-
+			<div>
+				<label for="siatApikey">Token Siat</label>
+				<input
+					type="text"
+					value={$siatApiKey}
+					on:keyup={async (e) => {
+						siatApiKey.sync(e.currentTarget.value)
+						
+					}}
+				/>
+			</div>
 			<div>
 				<label for="codigoSucursal">Codigo sucursal</label>
 				<input

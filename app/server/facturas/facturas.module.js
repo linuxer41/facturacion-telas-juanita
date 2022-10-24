@@ -13,13 +13,14 @@ const facturas_controller_1 = require("./facturas.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const factura_entity_1 = require("./entities/factura.entity");
 const mail_module_1 = require("../mail/mail.module");
+const users_module_1 = require("../users/users.module");
 let FacturasModule = class FacturasModule {
 };
 FacturasModule = __decorate([
     (0, common_1.Module)({
         controllers: [facturas_controller_1.FacturasController],
         providers: [facturas_service_1.FacturasService],
-        imports: [typeorm_1.TypeOrmModule.forFeature([factura_entity_1.Factura]), mail_module_1.MailModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([factura_entity_1.Factura]), mail_module_1.MailModule, users_module_1.UsersModule],
         exports: [facturas_service_1.FacturasService],
     })
 ], FacturasModule);

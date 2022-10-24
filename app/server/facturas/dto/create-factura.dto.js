@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateFacturaDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
+const user_entity_1 = require("../../users/entities/user.entity");
 const factura_item_dto_1 = require("./factura.item.dto");
 class CreateFacturaDto {
 }
@@ -153,5 +154,14 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Date)
 ], CreateFacturaDto.prototype, "fechaFactura", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: user_entity_1.User,
+        required: true,
+        description: 'Usuario que creo la Factura',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", user_entity_1.User)
+], CreateFacturaDto.prototype, "user", void 0);
 exports.CreateFacturaDto = CreateFacturaDto;
 //# sourceMappingURL=create-factura.dto.js.map

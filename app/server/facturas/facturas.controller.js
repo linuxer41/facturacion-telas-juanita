@@ -19,19 +19,33 @@ const create_factura_dto_1 = require("./dto/create-factura.dto");
 const update_factura_dto_1 = require("./dto/update-factura.dto");
 const swagger_1 = require("@nestjs/swagger");
 const query_factura_dto_1 = require("./dto/query-factura.dto");
+const passport_1 = require("@nestjs/passport");
+const global_decorator_1 = require("../decorators/global.decorator");
+const user_entity_1 = require("../users/entities/user.entity");
+const users_service_1 = require("../users/users.service");
 let FacturasController = class FacturasController {
-    constructor(facturasService) {
+    constructor(facturasService, usersService) {
         this.facturasService = facturasService;
+        this.usersService = usersService;
     }
-    create(createFacturaDto) {
+    async create(createFacturaDto, user) {
         try {
+            const userId = user.id;
+            const _user = await this.usersService.findOne({ id: userId });
+            if (!_user) {
+                throw new common_1.BadRequestException('User not found');
+            }
+            console.log(_user);
+            createFacturaDto.user = _user;
+            console.log(createFacturaDto);
             return this.facturasService.create(createFacturaDto);
         }
         catch (error) {
             throw new common_1.BadRequestException(error.message);
         }
     }
-    findAll(query) {
+    findAll(query, user) {
+        console.log('user', user);
         return this.facturasService.query(query);
     }
     findOne(id) {
@@ -47,15 +61,18 @@ let FacturasController = class FacturasController {
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, global_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_factura_dto_1.CreateFacturaDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [create_factura_dto_1.CreateFacturaDto,
+        user_entity_1.User]),
+    __metadata("design:returntype", Promise)
 ], FacturasController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, global_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [query_factura_dto_1.QueryFacturaDto]),
+    __metadata("design:paramtypes", [query_factura_dto_1.QueryFacturaDto, user_entity_1.User]),
     __metadata("design:returntype", void 0)
 ], FacturasController.prototype, "findAll", null);
 __decorate([
@@ -83,7 +100,9 @@ __decorate([
 FacturasController = __decorate([
     (0, swagger_1.ApiTags)('facturas'),
     (0, common_1.Controller)('facturas'),
-    __metadata("design:paramtypes", [facturas_service_1.FacturasService])
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    __metadata("design:paramtypes", [facturas_service_1.FacturasService,
+        users_service_1.UsersService])
 ], FacturasController);
 exports.FacturasController = FacturasController;
 //# sourceMappingURL=facturas.controller.js.map

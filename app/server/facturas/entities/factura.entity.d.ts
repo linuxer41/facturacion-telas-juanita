@@ -1,3 +1,4 @@
+import { User } from 'src/users/entities/user.entity';
 import { EntityHelper } from 'src/utils/entity-helper';
 import { FacturaItemDto } from '../dto/factura.item.dto';
 export declare class Factura extends EntityHelper {
@@ -22,4 +23,5 @@ export declare class Factura extends EntityHelper {
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;
+    user: User;
 }

@@ -123,14 +123,15 @@
 
 <div class="report">
 	<div class="top">
-		<!-- <ReportTopbar {title} on:close on:export={onExport} on:filter={() => (show_filter = true)} />
+		<ReportTopbar {title} on:close on:export={onExport} on:filter={() => (show_filter = true)} />
 		<div class="info">
 			<Search {keyword} on:search={onSearch} />
 			<p class="total_info">
 				<span> {_count || 0} Usuarios</span>
 			</p>
-		</div> -->
+		</div>
 	</div>
+	
 	<div class="content">
 		{#if (_data || []).length}
 			<table>
@@ -145,13 +146,13 @@
 				</thead>
 				<tbody>
 					{#each _data || [] as item, index}
-						<tr on:click={() => (targetData = item)}>
+						<tr>
 							<td>{item.id}</td>
 							<td>{item.email}</td>
 							<td>{item.firstName || ''} {item.lastName || ''}</td>
 							<td>{item.role.name}</td>
 							<td>
-								<i class="icon" on:click={async()=>showEdit = true}>
+								<i class="icon" on:click={async()=>{targetData = item;showEdit = true}}>
 									{@html getIcon({ name: 'Edit'}).filled}
 								</i>
 								<!-- <i class="icon error" on:click={async()=>await _delete(item)}>

@@ -19,6 +19,7 @@
 	import RegistarEventoModal from '../modals/RegistarEventoModal.svelte';
 	import NoReportData from './components/NoReportData.svelte';
 	import ReportBottomBar from './components/ReportBottomBar.svelte';
+	import ReportTopbar from './components/ReportTopbar.svelte';
 	export let contact_type_code = 'CUSTOMER';
 	export let title = 'Reporte de Facturas';
 	let _filter_obj = {
@@ -115,6 +116,7 @@
 				clientName: keyword,
 				cuf: keyword,
 				tipoEmision: 'FUERA DE LINEA',
+				estado: 'PENDIENTE',
 				..._filter_obj
 			});
 			if (response.status === 200) {
@@ -179,7 +181,7 @@
 <div class="report">
 	<div class="top">
 		<div>
-			<h3>{title}</h3>
+			<ReportTopbar {title} on:close on:filter={() => (show_filter = true)} />
 			{#if $eventoSignificativo}
 				<div>
 					<div class="title">

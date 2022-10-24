@@ -1,3 +1,4 @@
+import { User } from 'src/users/entities/user.entity';
 import { FacturaItemDto } from './factura.item.dto';
 export declare class CreateFacturaDto {
     numero: number;
@@ -17,4 +18,5 @@ export declare class CreateFacturaDto {
     estado: string;
     tipoEmision: string;
     fechaFactura: Date;
+    user?: User;
 }

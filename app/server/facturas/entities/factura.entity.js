@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Factura = void 0;
+const user_entity_1 = require("../../users/entities/user.entity");
 const entity_helper_1 = require("../../utils/entity-helper");
 const typeorm_1 = require("typeorm");
 let Factura = class Factura extends entity_helper_1.EntityHelper {
@@ -101,6 +102,13 @@ __decorate([
     (0, typeorm_1.DeleteDateColumn)(),
     __metadata("design:type", Date)
 ], Factura.prototype, "deletedAt", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, {
+        eager: true,
+        cascade: true,
+    }),
+    __metadata("design:type", user_entity_1.User)
+], Factura.prototype, "user", void 0);
 Factura = __decorate([
     (0, typeorm_1.Entity)()
 ], Factura);

@@ -22,6 +22,8 @@ class QueryFacturaDto extends api_1.BaseQueryDto {
         this.cuf = '';
         this.tipoEmision = '';
         this.estado = '';
+        this.desde = '';
+        this.hasta = '';
     }
 }
 __decorate([
@@ -72,5 +74,21 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], QueryFacturaDto.prototype, "estado", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: String,
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], QueryFacturaDto.prototype, "desde", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: String,
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], QueryFacturaDto.prototype, "hasta", void 0);
 exports.QueryFacturaDto = QueryFacturaDto;
 //# sourceMappingURL=query-factura.dto.js.map

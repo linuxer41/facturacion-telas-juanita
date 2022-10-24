@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CredentialApiHeaders = exports.AppCredential = exports.VerificarComunicacionDto = exports.AppCrediantialDto = void 0;
+exports.CurrentUser = exports.CredentialApiHeaders = exports.AppCredential = exports.VerificarComunicacionDto = exports.AppCrediantialDto = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
@@ -63,4 +63,11 @@ function CredentialApiHeaders() {
     return (0, common_1.applyDecorators)((0, swagger_1.ApiSecurity)('api_key'), (0, swagger_1.ApiSecurity)('siat_api_key'));
 }
 exports.CredentialApiHeaders = CredentialApiHeaders;
+exports.CurrentUser = (0, common_1.createParamDecorator)((data, ctx) => {
+    const user = ctx.switchToHttp().getRequest().user;
+    if (!user) {
+        return null;
+    }
+    return data ? user[data] : user;
+});
 //# sourceMappingURL=global.decorator.js.map

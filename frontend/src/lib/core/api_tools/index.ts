@@ -32,7 +32,8 @@ import {
 	tipoFacturaDocumento,
 	cuisHistory,
 	cufdHistory,
-	eventoSignificativo
+	eventoSignificativo,
+	user
 } from '../store';
 import { randomChoseFromList, roundToTwo, siatISOdateTime } from '../utils';
 const historyLimit = 100;
@@ -293,7 +294,8 @@ export async function enviarFactura(cart: Cart, fecha: Date = null, numero = 0) 
 		estado: 'PENDIENTE',
 		cufd: get(cufd)?.codigo,
 		tipoEmision: tiposEmision.find((item) => item.value == get(codigoTipoEmision))?.key || '',
-		fechaFactura: isoDate
+		fechaFactura: isoDate,
+		user: get(user),
 	};
 	const nuevaFacturaResponse = await facturaService.create(nuevaFactura);
 	if (!nuevaFacturaResponse.ok) {

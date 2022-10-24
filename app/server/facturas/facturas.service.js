@@ -69,6 +69,7 @@ let FacturasService = class FacturasService {
         }
         const queryBuilder = this.facturasRepository.createQueryBuilder('factura');
         queryBuilder.orderBy('factura.numero', 'DESC');
+        queryBuilder.leftJoinAndSelect('factura.user', 'user');
         queryBuilder.take(take);
         queryBuilder.skip(skip);
         if (filter.length > 0) {
@@ -79,6 +80,21 @@ let FacturasService = class FacturasService {
         if (query.tipoEmision) {
             queryBuilder.andWhere('factura.tipoEmision = :tipoEmision', {
                 tipoEmision: query.tipoEmision,
+            });
+        }
+        if (query.estado) {
+            queryBuilder.andWhere('factura.estado = :estado', {
+                estado: query.estado,
+            });
+        }
+        if (query.desde) {
+            queryBuilder.andWhere('factura.fechaFactura >= :desde', {
+                desde: query.desde,
+            });
+        }
+        if (query.hasta) {
+            queryBuilder.andWhere('factura.fechaFactura <= :hasta', {
+                hasta: query.hasta,
             });
         }
         const data = await queryBuilder.getManyAndCount();

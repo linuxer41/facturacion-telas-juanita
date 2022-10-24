@@ -56,6 +56,7 @@ interface Factura {
 	estado: string;
 	tipoEmision: string;
 	fechaFactura: string;
+	user?: Usuario;
 }
 
 interface FacturaPreparada {
