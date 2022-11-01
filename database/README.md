@@ -6,6 +6,7 @@ Para importar datos a la base de datos, se debe ejecutar el siguiente comando en
 
 ```bash
 psql -U postgres -d siat -f database/siat.sql
+pg_restore -Fc -j 8 -d siat_api siat_api.dump
 ```
 
 ## Exportar datos

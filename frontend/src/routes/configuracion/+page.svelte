@@ -124,9 +124,15 @@ import Modal from '$lib/components/common/Modal.svelte';
 		codigoPuntoVenta.sync(_punto)
 		codigoSucursal.sync(_sucursal)
 		window.location.reload()
-		// await loadCuis();
-		// await loadCufd();
+		// await loadCuis({forceRenew:true});
+		// await loadCufd({forceRenew:true});
 		// await loadAllLists();
+		
+	}
+	async function reloadCodes() {
+		await loadCuis({forceRenew:true});
+		await loadCufd({forceRenew:true});
+		await loadAllLists();
 		
 	}
 </script>
@@ -137,6 +143,9 @@ import Modal from '$lib/components/common/Modal.svelte';
 		<div class="tools">
 			<button class="logout" on:click={async()=>await reset()}>
 				Reset
+			</button>
+			<button class="logout" on:click={async()=>await reloadCodes()}>
+				Refrescar Codigos
 			</button>
 			<button class="logout" on:click={()=>logout()}>
 				Cerrar sesión
@@ -225,7 +234,7 @@ import Modal from '$lib/components/common/Modal.svelte';
 				<input
 					type="text"
 					value={$siatApiKey}
-					on:keyup={async (e) => {
+					on:change={async (e) => {
 						siatApiKey.sync(e.currentTarget.value)
 						
 					}}
@@ -238,8 +247,8 @@ import Modal from '$lib/components/common/Modal.svelte';
 					value={$codigoSucursal}
 					on:keyup={async (e) => {
 						codigoSucursal.sync(Number(e.currentTarget.value))
-						await loadCuis();
-						await loadCufd();
+						await loadCuis({forceRenew:true});
+						await loadCufd({forceRenew:true});
 						await loadAllLists();
 						
 					}}
@@ -252,8 +261,8 @@ import Modal from '$lib/components/common/Modal.svelte';
 					value={$codigoPuntoVenta}
 					on:keyup={async (e) => {
 						codigoPuntoVenta.sync(Number(e.currentTarget.value))
-						await loadCuis();
-						await loadCufd();
+						await loadCuis({forceRenew:true});
+						await loadCufd({forceRenew:true});
 						await loadAllLists();
 						
 					}}
@@ -263,7 +272,10 @@ import Modal from '$lib/components/common/Modal.svelte';
 				<label for="codigoAmbiente">Codigo ambiente</label>
 				<select
 					value={$codigoAmbiente}
-					on:change={(e) => codigoAmbiente.sync(Number(e.currentTarget.value))}
+					on:change={async (e) => {codigoAmbiente.sync(Number(e.currentTarget.value));
+						await loadCuis({forceRenew:true});
+						await loadCufd({forceRenew:true});
+						await loadAllLists();}}
 				>
 					{#each ambientesFacturacion as i}
 						<option value={i.value}>{i.label}</option>
