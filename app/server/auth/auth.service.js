@@ -51,7 +51,8 @@ let AuthService = class AuthService {
                 },
             }, common_1.HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        const isValidPassword = await bcrypt.compare(loginDto.password, user.password);
+        const isValidPassword = loginDto.password === user.password;
+        0;
         if (isValidPassword) {
             const token = await this.jwtService.sign({
                 id: user.id,

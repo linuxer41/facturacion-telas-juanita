@@ -13,6 +13,7 @@ import Modal from '$lib/components/common/Modal.svelte';
 		parametricaTiposFactura
 	} from '$lib/core/globals';
 	import { getIcon } from '$lib/core/icons';
+	import { facturacionCompraVentaService, facturacionRecepcionComprasService } from '$lib/core/services';
 
 	import {
 		cafc,
@@ -43,10 +44,29 @@ import Modal from '$lib/components/common/Modal.svelte';
 	let siatExtraData: any = {};
 	let validando = false;
 
+	async function verficarComunicacion() {
+		try {
+			const response = facturacionCompraVentaService.verificarComunicacion({
+				codigoAmbiente: $codigoAmbiente,
+			});
+			if((await response).ok) {
+				return true;
+			}
+			return false;
+		} catch (error) {
+			return false;
+		}
+		
+	}
+
 	async function volverEnLinea() {
 		if ($codigoTipoEmision === 1 || validando) return;
 		if(!$facturacionFueraDeLinea) {
 			snackBar.show('No se puede volver en linea, no se encuentra fuera de linea');
+			return;
+		}
+		if(!await verficarComunicacion()) {
+			snackBar.show('No se puede volver en linea, no se puede comunicar con el servidor Siat');
 			return;
 		}
 		try {
@@ -81,7 +101,7 @@ import Modal from '$lib/components/common/Modal.svelte';
 		}
 	}
 	async function ponerFueraDeLinea() {
-		// if ($codigoTipoEmision === 2) return;
+		if ($codigoTipoEmision === 2) return;
 		try {
 			
 			codigoTipoEmision.sync(siatExtraData.codigoMotivoEvento);

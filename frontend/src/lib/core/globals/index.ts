@@ -21,7 +21,8 @@ import {
 	cartsHistory,
 	cuisHistory,
 	cufdHistory,
-	eventoSignificativo
+	eventoSignificativo,
+	storeParametricas
 } from '../store';
 
 // POST
@@ -240,7 +241,7 @@ async function loadAllLists() {
 				index++;
 			}
 		}
-		console.log({
+		const allParams = {
 			parametricaMotivoDeAnulacion,
 			actividades,
 			fechaHora,
@@ -260,8 +261,35 @@ async function loadAllLists() {
 			parametricaTipoEmision,
 			parametricaPaisOrigen,
 			parametricaTipoMoneda
-		});
+		}
+		storeParametricas.sync(allParams);
 	} catch (error) {
+		// load from store storeParametricas
+		const allParams = get(storeParametricas);
+		if (allParams !== null) {
+			
+			parametricaMotivoDeAnulacion = allParams.parametricaMotivoDeAnulacion;
+			actividades = allParams.actividades;
+			fechaHora = allParams.fechaHora;
+			listaLeyendasFactura = allParams.listaLeyendasFactura;
+			parametricaTipoHabitacion = allParams.parametricaTipoHabitacion;
+			listaActividadesDocumentoSector = allParams.listaActividadesDocumentoSector;
+			parametricaTipoDocumentoIdentidad = allParams.parametricaTipoDocumentoIdentidad;
+			parametricaUnidadMedida = allParams.parametricaUnidadMedida;
+			parametricaTipoDocumentoSector = allParams.parametricaTipoDocumentoSector;
+			parametricaTiposFactura = allParams.parametricaTiposFactura;
+			verificarComunicacion = allParams.verificarComunicacion;
+			listaMensajesServicios = allParams.listaMensajesServicios;
+			parametricaTipoMetodoPago = allParams.parametricaTipoMetodoPago;
+			parametricaEventosSignificativos = allParams.parametricaEventosSignificativos;
+			parametricaTipoPuntoVenta = allParams.parametricaTipoPuntoVenta;
+			listaProductosServicios = allParams.listaProductosServicios;
+			parametricaTipoEmision = allParams.parametricaTipoEmision;
+			parametricaPaisOrigen = allParams.parametricaPaisOrigen;
+			parametricaTipoMoneda = allParams.parametricaTipoMoneda;
+
+
+		}
 		console.log(error);
 	}
 }

@@ -309,6 +309,38 @@
 	function fakeMsg(message) {
 		snackBar.show(message);
 	}
+
+
+    let is_ctrl_down = false;
+    let is_h_down = false;
+
+    function on_key_down(event) {
+        // `keydown` event is fired while the physical key is held down.
+
+        // Assuming you only want to handle the first press, we early
+        // return to skip.
+        if (event.repeat) return;
+
+        // In the switch-case we're updating our boolean flags whenever the
+        // desired bound keys are pressed.
+		console.log(event.key);
+        switch (event.key) {
+            case "F4":
+				showSelectProduct = true;
+
+                // By using `preventDefault`, it tells the Browser not to handle the
+                // key stroke for its own shortcuts or text input.
+                event.preventDefault();
+                break;
+
+            case "F5":
+                event.preventDefault();
+				procesarFactura();
+                break;
+        }
+    }
+
+
 	onMount(async () => {
 		const _storeCart = $storeCart
 		if (_storeCart) {
@@ -360,6 +392,7 @@
 							on:focus={() => (focusedItem = item)}
 							tabindex="0"
 							class:focused={focusedItem === item}
+							id={'cart-item-' + item?.product?.id}
 						>
 							<td style="width: 30%;">
 								<span>
@@ -565,6 +598,9 @@
 		<QuotationDocument on:ready={onQuotationReady} data={toRenderCotizacion} presentation="roll" />
 	</DocumentRenderer>
 {/if}
+<svelte:window
+    on:keydown={on_key_down}
+/>
 
 <style lang="scss">
 	.board {

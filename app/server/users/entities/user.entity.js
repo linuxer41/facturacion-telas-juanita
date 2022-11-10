@@ -14,19 +14,9 @@ const typeorm_1 = require("typeorm");
 const role_entity_1 = require("../../roles/entities/role.entity");
 const status_entity_1 = require("../../statuses/entities/status.entity");
 const file_entity_1 = require("../../files/entities/file.entity");
-const bcrypt = require("bcryptjs");
 const entity_helper_1 = require("../../utils/entity-helper");
 const auth_providers_enum_1 = require("../../auth/auth-providers.enum");
 let User = class User extends entity_helper_1.EntityHelper {
-    loadPreviousPassword() {
-        this.previousPassword = this.password;
-    }
-    async setPassword() {
-        if (this.previousPassword !== this.password && this.password) {
-            const salt = await bcrypt.genSalt();
-            this.password = await bcrypt.hash(this.password, salt);
-        }
-    }
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
@@ -40,19 +30,6 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
-__decorate([
-    (0, typeorm_1.AfterLoad)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], User.prototype, "loadPreviousPassword", null);
-__decorate([
-    (0, typeorm_1.BeforeInsert)(),
-    (0, typeorm_1.BeforeUpdate)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], User.prototype, "setPassword", null);
 __decorate([
     (0, typeorm_1.Column)({ default: auth_providers_enum_1.AuthProvidersEnum.email }),
     __metadata("design:type", String)

@@ -8,10 +8,10 @@ export async function load({routeId}) {
     user.load();
     siatApiKey.load();
     
-    // console.log('load', routeId, !get(authToken));
-    // if((!get(authToken) || !get(user)) && routeId !== 'auth') {
-    //     await goto('/auth');
-    // }
+    console.log('load', routeId, !get(authToken));
+    if((!get(authToken) || !get(user)) && routeId !== 'auth') {
+        await goto('/auth');
+    }
     
     return {
         title: 'Page',

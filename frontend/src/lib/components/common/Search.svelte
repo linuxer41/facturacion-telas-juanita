@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getIcon } from '$lib/core/icons';
 
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	export let keyword;
 	export let placeholder = 'Buscar';
 	const dispatch = createEventDispatcher();
@@ -20,15 +20,22 @@
 		};
 	}
 	const onKeyUp = debounce(async () => {
+		// if (keyword) {
+		// 	dispatch('search', keyword);
+		// }
 		dispatch('search', keyword);
 	}, 500);
+	onMount(() => {
+		const input = document.getElementById('search-input');
+		input?.focus();
+	});
 </script>
 
 <div class="search">
 	<i class="icon icon-20">
 		{@html getIcon({ name: 'Search' }).filled}
 	</i>
-	<input type="text" {placeholder} bind:value={keyword} on:keyup={onKeyUp} />
+	<input type="text" id="search-input" {placeholder} bind:value={keyword} on:input={onKeyUp} />
 </div>
 
 <style lang="scss">

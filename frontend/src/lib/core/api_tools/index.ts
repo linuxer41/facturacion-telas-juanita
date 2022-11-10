@@ -468,5 +468,17 @@ export function addToCart(product: Producto, cart) {
 		item.quantity++;
 		item.subtotal = item.quantity * item.price - item.discount;
 	}
+	setTimeout(() => {
+		const addesRow = document.querySelector(`#cart-item-${product.id}`);
+		// focus on fisrt input at row
+		if (addesRow) {
+			const input = addesRow.querySelector('input');
+			if (input) {
+				input?.focus();
+				// select all text
+				input?.select();
+			}
+		}
+	}, 100);
 	return updateAllCart(cart);
 }

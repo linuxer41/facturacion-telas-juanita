@@ -1,6 +1,6 @@
 {
 	"name": "telas-juanita",
-	"version": "0.0.4",
+	"version": "0.0.6",
 	"private": true,
 	"main": "src/main.cjs",
 	"author": {
