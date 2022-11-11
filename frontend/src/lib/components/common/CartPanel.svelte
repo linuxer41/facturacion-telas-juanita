@@ -337,6 +337,19 @@
                 event.preventDefault();
 				procesarFactura();
                 break;
+            case "F6":
+                event.preventDefault();
+				const nitInput = document.querySelector('#nit-input') as HTMLInputElement;
+				if(nitInput){
+					nitInput.focus();
+				}
+                break;
+            case "F7":
+                event.preventDefault();
+				cart = emptyCart();
+				//@ts-ignore
+				focusedItem = undefined;
+                break;
         }
     }
 
@@ -534,7 +547,7 @@
 			{/if}
 			<label for="nit">
 				Nit/CI:
-				<input type="text" bind:value={cart.cliente.nit} on:keyup={searchcliente} />
+				<input type="text" id="nit-input" bind:value={cart.cliente.nit} on:keyup={searchcliente} />
 			</label>
 			<label for="cliente">
 				Cliente:

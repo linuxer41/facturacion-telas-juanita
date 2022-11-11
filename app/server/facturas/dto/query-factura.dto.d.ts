@@ -6,6 +6,7 @@ export declare class QueryFacturaDto extends BaseQueryDto {
     cuf: string;
     tipoEmision: string;
     estado: string;
+    mainFacturas: boolean;
     desde: string;
     hasta: string;
 }

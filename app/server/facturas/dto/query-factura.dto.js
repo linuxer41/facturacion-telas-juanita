@@ -22,6 +22,7 @@ class QueryFacturaDto extends api_1.BaseQueryDto {
         this.cuf = '';
         this.tipoEmision = '';
         this.estado = '';
+        this.mainFacturas = false;
         this.desde = '';
         this.hasta = '';
     }
@@ -74,6 +75,14 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], QueryFacturaDto.prototype, "estado", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: Boolean,
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], QueryFacturaDto.prototype, "mainFacturas", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         type: String,

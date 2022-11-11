@@ -22,7 +22,8 @@ import {
 	cuisHistory,
 	cufdHistory,
 	eventoSignificativo,
-	storeParametricas
+	storeParametricas,
+	facturacionFueraDeLinea
 } from '../store';
 
 // POST
@@ -138,6 +139,7 @@ function loadStore() {
 	cuisHistory.load();
 	cufdHistory.load();
 	eventoSignificativo.load();
+	facturacionFueraDeLinea.load();
 }
 
 async function loadAllLists() {

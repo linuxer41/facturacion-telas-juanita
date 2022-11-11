@@ -87,6 +87,12 @@ let FacturasService = class FacturasService {
                 estado: query.estado,
             });
         }
+        if (query.mainFacturas) {
+            queryBuilder.andWhere('factura.tipoEmision in (:...tipoEmision) and factura.estado in (:...estado)', {
+                tipoEmision: ['EN LINEA', 'FUERA DE LINEA'],
+                estado: ['VALIDADA', 'ANULADA'],
+            });
+        }
         if (query.desde) {
             queryBuilder.andWhere('factura.fechaFactura >= :desde', {
                 desde: query.desde,

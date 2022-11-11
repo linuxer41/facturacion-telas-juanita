@@ -247,6 +247,40 @@ export async function prepararFactura(
 }
 
 export async function enviarFactura(cart: Cart, fecha: Date = null, numero = 0) {
+	if (Number(get(codigoTipoEmision)) === 1) {
+		try {
+			const response = await facturacionCompraVentaService.verificarComunicacion({
+				codigoAmbiente: get(codigoAmbiente),
+			})
+			if (!response.ok) {
+				throw new Error('Error al verificar comunicación: ' + (await response.text()));
+			}
+		} catch (error) {
+			throw new Error('Error al verificar comunicacion: ' + error['message']);
+		}
+	}
+	{
+		// update client
+		try {
+			if (cart.cliente?.id) {
+			
+				const response = await clienteService.patch(cart.cliente.id,{
+					email: cart.cliente?.email,
+					name: cart.cliente?.name,
+					nit: cart.cliente?.nit,
+				});
+				if(response.ok){
+					const json = await response.json();
+					console.log(json);
+					cart.cliente = json;
+					console.log(cart.cliente);
+				}
+			}
+		} catch (error) {
+			// pass
+		}
+	}
+
 	const isoDate = siatISOdateTime(fecha || new Date());
 	const preparada = await prepararFactura(cart, isoDate, numero);
 	const requestData = {

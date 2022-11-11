@@ -106,7 +106,8 @@
 				clientName: keyword,
 				cuf: keyword,
 				// tipoEmision: 'EN LINEA',
-				estado: 'VALIDADA',
+				// estado: 'VALIDADA',
+				mainFacturas: true,
 				...getPeriodDates(_filter_obj)
 			});
 			if (response.status === 200) {
