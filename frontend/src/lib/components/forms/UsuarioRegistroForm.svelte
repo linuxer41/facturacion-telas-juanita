@@ -10,7 +10,7 @@
 	import PasswordInput from './inputs/PasswordInput.svelte';
 	export let title = 'Nuevo cliente';
 	export let update = false;
-	export let data: Usuario & { password: string, roleId: number } = {} as any;
+	export let data: Usuario & { password: string; roleId: number } = {} as any;
 	if (!data) data = {} as any;
 	let targetForm: HTMLFormElement;
 
@@ -23,8 +23,6 @@
 		const minify = { ...data };
 		return minify;
 	}
-
-
 
 	async function _register() {
 		const minified = minify();
@@ -46,7 +44,6 @@
 		}
 	}
 
-
 	async function onProcess() {
 		// fix double click
 		if (loading) {
@@ -54,7 +51,7 @@
 		}
 		loading = true;
 		try {
-			await _register()
+			await _register();
 			dispatch('register');
 		} catch (error) {
 			console.debug(error);
@@ -92,9 +89,7 @@
 		<div>
 			<NativeInput bind:value={data.lastName} label="Apellido" description="" />
 		</div>
-
 	</form>
-
 </FormModal>
 
 <style lang="scss">

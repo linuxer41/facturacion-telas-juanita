@@ -12,7 +12,7 @@ export class BaseSiatService {
 			headers: {
 				'Content-Type': 'application/json',
 				siat_api_key: get(siatApiKey),
-				'Authorization': `Bearer `+get(authToken)
+				Authorization: `Bearer ` + get(authToken)
 			},
 			method: method,
 			body: data ? JSON.stringify(data) : null

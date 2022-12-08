@@ -33,6 +33,8 @@ class BaseQueryDto {
     constructor() {
         this.page = 1;
         this.limit = 50;
+        this.orderBy = 'id';
+        this.order = 'ASC';
     }
 }
 __decorate([
@@ -60,5 +62,23 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], BaseQueryDto.prototype, "limit", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: String,
+        required: false,
+        example: 'id',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], BaseQueryDto.prototype, "orderBy", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: String,
+        required: false,
+        example: 'ASC',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], BaseQueryDto.prototype, "order", void 0);
 exports.BaseQueryDto = BaseQueryDto;
 //# sourceMappingURL=index.js.map

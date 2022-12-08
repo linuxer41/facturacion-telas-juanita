@@ -36,7 +36,6 @@
 				return acc;
 			}, {});
 
-
 			const response = await usuarioService.patch(minified.id, modified);
 			if (response.status === 200) {
 				// data = await response.json();
@@ -49,8 +48,6 @@
 		}
 	}
 
-
-
 	async function onProcess() {
 		// fix double click
 		if (loading) {
@@ -59,11 +56,11 @@
 		loading = true;
 		try {
 			if (targetForm.checkValidity()) {
-						await _update();
-						// dispatch('update', data);
-					} else {
-						targetForm.reportValidity();
-					}
+				await _update();
+				// dispatch('update', data);
+			} else {
+				targetForm.reportValidity();
+			}
 		} catch (error) {
 			console.debug(error);
 		} finally {
@@ -82,7 +79,6 @@
 	hasDelete={update}
 >
 	<form action="javascript:void(0);" bind:this={targetForm}>
-
 		<!-- <div>
 			<EmailInput bind:value={data.email} label="Correo" />
 		</div> -->
@@ -94,7 +90,6 @@
 			<NativeInput bind:value={data.lastName} label="Apellido" description="" />
 		</div>
 	</form>
-
 </FormModal>
 
 <style lang="scss">

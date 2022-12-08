@@ -24,16 +24,16 @@
 			path: '/clientes',
 			label: 'Clientes'
 		},
-		{
-			path: '/contingencia',
-			label: 'Contingencia'
-		},
+		// {
+		// 	path: '/contingencia',
+		// 	label: 'Contingencia'
+		// },
 		{
 			path: '/configuracion',
 			label: 'Configuración'
 		}
 	];
-	if(($user?.role?.id === 1)){
+	if ($user?.role?.id === 1) {
 		// append to 4 position
 		routes.splice(4, 0, {
 			path: '/usuarios',
@@ -47,12 +47,26 @@
 	<div class="appContent">
 		<slot />
 	</div>
-	<div class="toolbar">
-		{#each routes as route}
-			<div class="link" on:click={async()=>await goto(route.path)} class:active={$page.url.pathname === route.path}>
-				{route.label}
-			</div>
-		{/each}
+	<div class="bottom">
+		<div class="toolbar">
+			{#each routes as route}
+				<div
+					class="link"
+					on:click={async () => await goto(route.path)}
+					class:active={$page.url.pathname === route.path}
+				>
+					{route.label}
+				</div>
+			{/each}
+		</div>
+		<div class="info">
+			<h5 class="user">
+				{$user?.firstName} {$user.lastName} : {$user?.role?.name}
+			</h5>
+			<p class="version">
+				v: {__APP_VERSION__}
+			</p>
+		</div>
 	</div>
 	<!-- <div class="iframe">
 		<iframe
@@ -90,6 +104,31 @@
 			grid-template-rows: 1fr;
 			grid-template-columns: 1fr;
 		}
+		.bottom{
+			display: grid;
+			grid-template-rows: 1fr;
+			grid-template-columns: 1fr auto;
+			overflow: auto;
+		}
+		.info{
+			display: grid;
+			grid-template-rows: 1fr;
+			grid-template-columns: 1fr;
+			overflow: auto;
+			white-space: nowrap;
+			.user{
+				display: grid;
+				grid-template-rows: 1fr;
+				grid-template-columns: 1fr;
+				overflow: auto;
+				span{
+					display: grid;
+					grid-template-rows: 1fr;
+					grid-template-columns: 1fr;
+					overflow: auto;
+				}
+			}
+		}
 		.toolbar {
 			display: grid;
 			grid-template-rows: 1fr;
@@ -118,6 +157,10 @@
 				background-color: var(--primary-color);
 				color: var(--text-color-on-primary);
 			}
+		}
+		.version{
+			opacity: 0.5;
+			text-align: end;
 		}
 	}
 </style>

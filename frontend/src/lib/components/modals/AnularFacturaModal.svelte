@@ -35,7 +35,7 @@
 				cufd: $cufd?.codigo,
 				cuis: $cuis?.codigo,
 				nit: $nit,
-				tipoFacturaDocumento: factura.json.cabecera.tipoFacturaDocumento || 1,
+				tipoFacturaDocumento: factura.json.cabecera?.tipoFacturaDocumento || 1,
 				codigoMotivo: siatExtraData.codigoMotivo,
 				cuf: factura.cuf
 			});

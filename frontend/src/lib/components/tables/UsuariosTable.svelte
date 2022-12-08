@@ -117,7 +117,6 @@
 
 	onMount(() => {
 		_load();
-
 	});
 </script>
 
@@ -131,7 +130,7 @@
 			</p>
 		</div>
 	</div>
-	
+
 	<div class="content">
 		{#if (_data || []).length}
 			<table>
@@ -152,8 +151,14 @@
 							<td>{item.firstName || ''} {item.lastName || ''}</td>
 							<td>{item.role.name}</td>
 							<td>
-								<i class="icon" on:click={async()=>{targetData = item;showEdit = true}}>
-									{@html getIcon({ name: 'Edit'}).filled}
+								<i
+									class="icon"
+									on:click={async () => {
+										targetData = item;
+										showEdit = true;
+									}}
+								>
+									{@html getIcon({ name: 'Edit' }).filled}
 								</i>
 								<!-- <i class="icon error" on:click={async()=>await _delete(item)}>
 									{@html getIcon({ name: 'Password'}).filled}
@@ -196,40 +201,40 @@
 	/>
 {/if}
 {#if showEdit}
-<UsuarioForm
-	data={targetData}
-	on:close={() => {
-		showEdit = false;
-	}}
-	on:update={async (e) => {
-		await _load();
-		showEdit = false;
-	}}
-/>
+	<UsuarioForm
+		data={targetData}
+		on:close={() => {
+			showEdit = false;
+		}}
+		on:update={async (e) => {
+			await _load();
+			showEdit = false;
+		}}
+	/>
 {/if}
 {#if showPassword}
-<UsuarioForm
-	data={targetData}
-	on:close={() => {
-		showPassword = false;
-	}}
-	on:edit={async (e) => {
-		await _load();
-		showPassword = false;
-	}}
-/>
+	<UsuarioForm
+		data={targetData}
+		on:close={() => {
+			showPassword = false;
+		}}
+		on:edit={async (e) => {
+			await _load();
+			showPassword = false;
+		}}
+	/>
 {/if}
 
 {#if showRegister}
-<UsuarioRegistroForm
-	on:close={() => {
-		showRegister = false;
-	}}
-	on:register={async (e) => {
-		await _load();
-		showRegister = false;
-	}}
-/>
+	<UsuarioRegistroForm
+		on:close={() => {
+			showRegister = false;
+		}}
+		on:register={async (e) => {
+			await _load();
+			showRegister = false;
+		}}
+	/>
 {/if}
 
 <style lang="scss">

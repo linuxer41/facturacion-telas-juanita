@@ -278,13 +278,16 @@
 							<td>{item.cuf}</td>
 							<td class="actions">
 								<div class="icons">
-									<i class="icon" on:click={async () => {
-										window.open(`http://localhost:3000/${item.pdf}`, '_blank');
-									}}>
+									<i
+										class="icon"
+										on:click={async () => {
+											window.open(`http://localhost:3000/${item.pdf}`, '_blank');
+										}}
+									>
 										{@html getIcon({ name: 'EyeShow' }).filled}
 									</i>
-									<i class="icon error" on:click={async()=>await _delete(item)}>
-										{@html getIcon({ name: 'Delete'}).filled}
+									<i class="icon error" on:click={async () => await _delete(item)}>
+										{@html getIcon({ name: 'Delete' }).filled}
 									</i>
 								</div>
 							</td>
@@ -333,7 +336,7 @@
 			// if (Number(evento.codigoEvento) > 4) {
 			// 	facturacionManual.sync(true);
 			// }
-			facturacionManual.sync(true)
+			facturacionManual.sync(true);
 		}}
 	/>
 {/if}

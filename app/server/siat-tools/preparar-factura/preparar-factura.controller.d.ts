@@ -11,4 +11,5 @@ export declare class PrepararFacturaController {
     validarPaquete(credential: AppCrediantialDto, data: SolicitudValidarPaqueteFactura): Promise<any>;
     enviarEmailFactura(data: SolicitudEnviarEmailFacturaDTO): Promise<any>;
     anularEmailFactura(data: SolicitudAnularEmailFacturaDTO): Promise<any>;
+    facturasPendientes(): Promise<any>;
 }

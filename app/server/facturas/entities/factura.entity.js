@@ -26,28 +26,28 @@ __decorate([
 ], Factura.prototype, "numero", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)({ nullable: false }),
     __metadata("design:type", String)
 ], Factura.prototype, "clientName", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)({ nullable: false }),
     __metadata("design:type", String)
 ], Factura.prototype, "nit", void 0);
 __decorate([
-    (0, typeorm_1.Column)('jsonb', { nullable: true }),
+    (0, typeorm_1.Column)('jsonb', { nullable: false }),
     __metadata("design:type", Array)
 ], Factura.prototype, "items", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text', { nullable: true }),
+    (0, typeorm_1.Column)('text', { nullable: false }),
     __metadata("design:type", String)
 ], Factura.prototype, "xml", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text', { nullable: true }),
+    (0, typeorm_1.Column)('text', { nullable: false, default: '' }),
     __metadata("design:type", String)
 ], Factura.prototype, "pdf", void 0);
 __decorate([
-    (0, typeorm_1.Column)('jsonb', { nullable: true }),
+    (0, typeorm_1.Column)('jsonb', { nullable: false }),
     __metadata("design:type", Object)
 ], Factura.prototype, "json", void 0);
 __decorate([
@@ -72,7 +72,7 @@ __decorate([
 ], Factura.prototype, "cuf", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
-    (0, typeorm_1.Column)('text', { nullable: false, default: '' }),
+    (0, typeorm_1.Column)('text', { nullable: false }),
     __metadata("design:type", String)
 ], Factura.prototype, "cufd", void 0);
 __decorate([

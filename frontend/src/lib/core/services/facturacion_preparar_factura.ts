@@ -17,5 +17,8 @@ class FacturacionPrepararFacturaService extends BaseSiatService {
 	async anularEmailFactura(data): Promise<Response> {
 		return this.fetch(`/anularEmailFactura`, 'POST', data);
 	}
+	async facturasPendientes(): Promise<Response> {
+		return this.fetch(`/facturasPendientes`, 'GET');
+	}
 }
 export const facturacionPrepararFacturaService = new FacturacionPrepararFacturaService();

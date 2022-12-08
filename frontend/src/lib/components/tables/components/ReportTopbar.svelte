@@ -8,6 +8,7 @@
 	export let title = '';
 	export let filterCount = 0;
 	export let showTools = false;
+	export let hasPackage = false;
 	const dispatch = createEventDispatcher();
 	let showExportModal = false;
 </script>
@@ -15,10 +16,13 @@
 <div class="topbar">
 	<TitleBar icon="ChevronLeft" {title} on:close={() => goto('/')} />
 	<div class="icons">
+		{#if hasPackage}
+			<ActionIcon name="Backpack" icon_type="secondary" on:click={() => dispatch('package')} />
+		{/if}
 		{#if showTools}
-		<FilterButton {filterCount} on:click={() => dispatch('filter')} />
-		<ActionIcon name="ArrowDown" icon_type="primary" on:click={() => (showExportModal = true)} />
-			{/if}
+			<FilterButton {filterCount} on:click={() => dispatch('filter')} />
+			<ActionIcon name="ArrowDown" icon_type="primary" on:click={() => (showExportModal = true)} />
+		{/if}
 	</div>
 </div>
 {#if showExportModal}

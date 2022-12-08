@@ -33,4 +33,5 @@ export declare class FacturasService {
     maxId(): Promise<any>;
     findByFechaFacturaRange(start: Date, end: Date, cufd: string): Promise<[Factura[], number]>;
     findByCufd(cufd: string): Promise<[Factura[], number]>;
+    selectPendingCuisAndCount(): Promise<any>;
 }

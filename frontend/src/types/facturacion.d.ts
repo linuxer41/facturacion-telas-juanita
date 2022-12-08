@@ -37,4 +37,5 @@ interface SiatFueraDeLinea {
 	codigoEvento: number;
 	descripcion: string;
 	fechaInicio: string;
+	cufdEvento?: SiatCufd;
 }

@@ -33,7 +33,10 @@ import {
 	cuisHistory,
 	cufdHistory,
 	eventoSignificativo,
-	user
+	user,
+	snackBar,
+	facturacionFueraDeLinea,
+	facturacionFueraDeLineaHistory
 } from '../store';
 import { randomChoseFromList, roundToTwo, siatISOdateTime } from '../utils';
 const historyLimit = 100;
@@ -65,6 +68,17 @@ export function cufdHistoryUpdate(cufd: SiatCufd) {
 
 	_cufdHistory = [cufd, ..._cufdHistory];
 	cufdHistory.sync(_cufdHistory);
+}
+
+export function facturacionFueraDeLineaHistoryUpdate(data: SiatFueraDeLinea) {
+	let _facturacionFueraDeLineaHistory = get(facturacionFueraDeLineaHistory);
+	console.log('facturacionFueraDeLineaHistoryUpdate', _facturacionFueraDeLineaHistory.length);
+	if (_facturacionFueraDeLineaHistory.length > historyLimit) {
+		_facturacionFueraDeLineaHistory.pop();
+	}
+
+	_facturacionFueraDeLineaHistory = [data, ..._facturacionFueraDeLineaHistory];
+	facturacionFueraDeLineaHistory.sync(_facturacionFueraDeLineaHistory);
 }
 
 export async function loadCufd({ forceRenew = false }: { forceRenew?: boolean } = {}) {
@@ -156,20 +170,23 @@ export async function prepararFactura(
 ): Promise<FacturaPreparada> {
 	const _nit = cart.cliente?.nit || '99001';
 	const clientRes = await clienteService.getByNit(_nit);
-	let client = clientRes.ok ? (await clientRes.json()) : undefined;
-	if(!client) {
+	let client = clientRes.ok ? await clientRes.json() : undefined;
+	if (!client) {
 		const clientRes = await clienteService.create({
 			nit: _nit,
 			name: cart.cliente?.name || 'S/N',
-			email: cart.cliente?.email || null,
+			email: cart.cliente?.email || null
 		});
-		client = clientRes.ok ? (await clientRes.json()) : undefined;
+		client = clientRes.ok ? await clientRes.json() : undefined;
 	}
 	cart.cliente = client;
 	const _cufd = get(eventoSignificativo)
 		? get(eventoSignificativo).cufdEvento
 		: get(cufd) || ({} as SiatCufd);
-	let codigoExepcion = [2, 3].includes(get(codigoTipoEmision)) && String(cart.codigoTipoDocumentoIdentidad) === "5" ? 1 : 0;
+	let codigoExepcion =
+		[2, 3].includes(get(codigoTipoEmision)) && String(cart.codigoTipoDocumentoIdentidad) === '5'
+			? 1
+			: 0;
 	if (
 		get(codigoTipoEmision) === 1 &&
 		cart.codigoTipoDocumentoIdentidad === 5 &&
@@ -201,8 +218,8 @@ export async function prepararFactura(
 			fechaEmision: isoDate,
 			nombreRazonSocial: cart.cliente?.name || 'S/N',
 			codigoTipoDocumentoIdentidad: cart.codigoTipoDocumentoIdentidad,
-			numeroDocumento: Number(cart.codigoTipoDocumentoIdentidad) === 1? _nit.split('-')[0]: _nit,
-			complemento: Number(cart.codigoTipoDocumentoIdentidad) === 1? (_nit.split('-')[1] || ''): '',
+			numeroDocumento: Number(cart.codigoTipoDocumentoIdentidad) === 1 ? _nit.split('-')[0] : _nit,
+			complemento: Number(cart.codigoTipoDocumentoIdentidad) === 1 ? _nit.split('-')[1] || '' : '',
 			codigoCliente: String(cart.cliente?.id || 0),
 			codigoMetodoPago: cart.codigoMetodoPago || 1,
 			numeroTarjeta: cart.numeroTarjeta ? hideCardNumber(cart.numeroTarjeta) : '',
@@ -247,29 +264,16 @@ export async function prepararFactura(
 }
 
 export async function enviarFactura(cart: Cart, fecha: Date = null, numero = 0) {
-	if (Number(get(codigoTipoEmision)) === 1) {
-		try {
-			const response = await facturacionCompraVentaService.verificarComunicacion({
-				codigoAmbiente: get(codigoAmbiente),
-			})
-			if (!response.ok) {
-				throw new Error('Error al verificar comunicación: ' + (await response.text()));
-			}
-		} catch (error) {
-			throw new Error('Error al verificar comunicacion: ' + error['message']);
-		}
-	}
 	{
 		// update client
 		try {
 			if (cart.cliente?.id) {
-			
-				const response = await clienteService.patch(cart.cliente.id,{
+				const response = await clienteService.patch(cart.cliente.id, {
 					email: cart.cliente?.email,
 					name: cart.cliente?.name,
-					nit: cart.cliente?.nit,
+					nit: cart.cliente?.nit
 				});
-				if(response.ok){
+				if (response.ok) {
 					const json = await response.json();
 					console.log(json);
 					cart.cliente = json;
@@ -279,6 +283,22 @@ export async function enviarFactura(cart: Cart, fecha: Date = null, numero = 0) 
 		} catch (error) {
 			// pass
 		}
+	}
+	switch (await verificarComunicacion()) {
+		case 1:
+			if (
+				get(codigoTipoEmision) === 2 &&
+				[1, 2].includes(get(facturacionFueraDeLinea)?.codigoEvento)
+			)
+				await volverEnLinea();
+			break;
+		case 2:
+			// registrar evento significativo
+			if (get(codigoTipoEmision) === 1) await ponerFueraDeLinea(2);
+			break;
+		case 3:
+			if (get(codigoTipoEmision) === 1) await ponerFueraDeLinea(1);
+			break;
 	}
 
 	const isoDate = siatISOdateTime(fecha || new Date());
@@ -300,42 +320,22 @@ export async function enviarFactura(cart: Cart, fecha: Date = null, numero = 0) 
 		fechaEnvio: isoDate
 	};
 	const blob = new Blob([preparada.xml], { type: 'text/xml' });
-	const form = new FormData()
-	form.append('file', blob, `factura_${preparada?.json?.cabecera?.numeroFactura || 1}_${preparada.json.cabecera.cuf}.xml`)
+	const form = new FormData();
+	form.append(
+		'file',
+		blob,
+		`factura_${preparada?.json?.cabecera?.numeroFactura || 1}_${preparada.json.cabecera.cuf}.xml`
+	);
 	const _response = await fetch(`${SETTINGS.apiUrl}/v1/files/invoice/upload`, {
 		method: 'POST',
 		body: form
-	})
+	});
 	if (!_response.ok) {
-		throw new Error("Error al subir el archivo");
-		
+		throw new Error('Error al subir el archivo');
 	}
-	const _json = await _response.json()
-	const xmlUrl = _json[0].path
-
-
-	let nuevaFactura: Factura = {
-		numero: Number(preparada?.json?.cabecera?.numeroFactura || 0),
-		clientName: preparada?.json?.cabecera?.nombreRazonSocial || 'Sin nombre',
-		nit: preparada?.json?.cabecera?.numeroDocumento || '99001',
-		items: [],
-		xml: xmlUrl,
-		subtotal: Number(preparada?.json?.cabecera?.montoTotal || 0),
-		descuento: Number(preparada?.json?.cabecera?.descuentoAdicional || 0),
-		total: Number(preparada?.json?.cabecera?.montoTotalSujetoIva || 0),
-		cuf: preparada?.json?.cabecera?.cuf || '',
-		json: preparada?.json || ({} as FacturaXMLJSON),
-		estado: 'PENDIENTE',
-		cufd: get(cufd)?.codigo,
-		tipoEmision: tiposEmision.find((item) => item.value == get(codigoTipoEmision))?.key || '',
-		fechaFactura: isoDate,
-		user: get(user),
-	};
-	const nuevaFacturaResponse = await facturaService.create(nuevaFactura);
-	if (!nuevaFacturaResponse.ok) {
-		throw new Error('Error al crear factura: ' + (await nuevaFacturaResponse.text()));
-	}
-	nuevaFactura = await nuevaFacturaResponse.json();
+	const _json = await _response.json();
+	const xmlUrl = _json[0].path;
+	let estadoFactura = 'PENDIENTE';
 
 	if (Number(get(codigoTipoEmision) || 1) === 1) {
 		// verificar nit
@@ -350,69 +350,86 @@ export async function enviarFactura(cart: Cart, fecha: Date = null, numero = 0) 
 					(respuesta?.mensajesList[0]?.descripcion || 'error desconocido')
 			);
 		}
-		const _response = await facturaService.patch(nuevaFactura.id, {
-			estado: 'VALIDADA'
-		});
-		if (!_response.ok) {
-			throw new Error('Error al actualizar factura: ' + (await _response.text()));
-		}
+		estadoFactura = 'VALIDADA';
 	}
+	let nuevaFactura: Factura = {
+		numero: Number(preparada?.json?.cabecera?.numeroFactura || 0),
+		clientName: preparada?.json?.cabecera?.nombreRazonSocial || 'Sin nombre',
+		nit: preparada?.json?.cabecera?.numeroDocumento || '99001',
+		items: [],
+		xml: xmlUrl,
+		subtotal: Number(preparada?.json?.cabecera?.montoTotal || 0),
+		descuento: Number(preparada?.json?.cabecera?.descuentoAdicional || 0),
+		total: Number(preparada?.json?.cabecera?.montoTotalSujetoIva || 0),
+		cuf: preparada?.json?.cabecera?.cuf || '',
+		json: preparada?.json || ({} as FacturaXMLJSON),
+		estado: estadoFactura,
+		cufd: get(cufd)?.codigo,
+		tipoEmision: tiposEmision.find((item) => item.value == get(codigoTipoEmision))?.key || '',
+		fechaFactura: isoDate,
+		user: get(user)
+	};
+	const nuevaFacturaResponse = await facturaService.create(nuevaFactura);
+	if (!nuevaFacturaResponse.ok) {
+		throw new Error('Error al crear factura: ' + (await nuevaFacturaResponse.text()));
+	}
+	nuevaFactura = await nuevaFacturaResponse.json();
 	return nuevaFactura;
 }
 export async function registrarEvento(
 	codigoMotivoEvento,
+	cufdEvento: SiatCufd,
 	inicio: Date,
 	fin: Date,
 	descripcion = 'Contingencia'
 ): Promise<SiatEventoSignificativo> {
 	const fechaHoraFinEvento = fin;
 	const fechaHoraInicioEvento = inicio;
-	const _cudfHistory = get(cufdHistory) || [];
 	// find the cufd between the dates
-	const cufdEvento = _cudfHistory.find((c) => {
-		const cufdEbdDate = new Date(c.fechaVigencia);
-		const cufdStartDate = subDays(cufdEbdDate, 1);
-		// return fechaHoraInicioEvento >= cufdStartDate && fechaHoraFinEvento <= cufdEbdDate;
-		return fechaHoraInicioEvento >= cufdStartDate;
-	});
-	console.log({ cufdEvento });
-	// if no cufd found
-	if (!cufdEvento) {
-		throw new Error('No se encontró un CUFD válido para el rango de fechas seleccionado');
-	}
 	await loadCufd({ forceRenew: true });
-	const response = await facturacionOperacionesService.registroEventoSignificativo({
-		codigoMotivoEvento: codigoMotivoEvento || 1,
-		codigoAmbiente: get(codigoAmbiente),
-		codigoSistema: get(codigoSistema),
-		codigoSucursal: get(codigoSucursal),
-		cuis: get(cuis)?.codigo,
-		nit: get(nit),
-		codigoPuntoVenta: get(codigoPuntoVenta),
-		cufd: get(cufd)?.codigo,
-		cufdEvento: cufdEvento.codigo,
-		descripcion: descripcion,
-		fechaHoraFinEvento: siatISOdateTime(fechaHoraFinEvento),
-		fechaHoraInicioEvento: siatISOdateTime(fechaHoraInicioEvento)
-	});
 
-	if (!response.ok) {
-		throw new Error('Error al registrar evento: ' + (await response.text()));
-	}
-	const result = await response.json();
-	if (result.transaccion !== true) {
-		throw new Error(
-			'Error de recepcion SIN: ' + (result?.mensajesList[0]?.descripcion || 'error desconocido')
-		);
-	}
-	const eventosSignificativos = await loadEventosSignificativos();
-	const codigoRecepcionEventoSignificativo = result.codigoRecepcionEventoSignificativo;
-	const evento: SiatEventoSignificativo = eventosSignificativos.find(
-		(e) => e.codigoRecepcionEventoSignificativo === codigoRecepcionEventoSignificativo
+	let eventosSignificativos: SiatEventoSignificativo[] = await loadEventosSignificativos(fechaHoraInicioEvento) || [];
+	// find the eventos between the dates
+
+	let evento = eventosSignificativos.find(
+		(item) => item.fechaInicio <= siatISOdateTime(fechaHoraInicioEvento)  && item.fechaFin >= siatISOdateTime(fechaHoraFinEvento)
 	);
-
 	if (!evento) {
-		throw new Error('No se encontró el evento registrado');
+
+
+
+		const response = await facturacionOperacionesService.registroEventoSignificativo({
+			codigoMotivoEvento: codigoMotivoEvento || 1,
+			codigoAmbiente: get(codigoAmbiente),
+			codigoSistema: get(codigoSistema),
+			codigoSucursal: get(codigoSucursal),
+			cuis: get(cuis)?.codigo,
+			nit: get(nit),
+			codigoPuntoVenta: get(codigoPuntoVenta),
+			cufd: get(cufd)?.codigo,
+			cufdEvento: cufdEvento.codigo,
+			descripcion: descripcion,
+			fechaHoraFinEvento: siatISOdateTime(fechaHoraFinEvento),
+			fechaHoraInicioEvento: siatISOdateTime(fechaHoraInicioEvento)
+		});
+
+		if (!response.ok) {
+			throw new Error('Error al registrar evento: ' + (await response.text()));
+		}
+		const result = await response.json();
+		if (result.transaccion !== true) {
+			throw new Error(
+				'Error de recepcion SIN: ' + (result?.mensajesList[0]?.descripcion || 'error desconocido')
+			);
+		}
+		eventosSignificativos = await loadEventosSignificativos();
+		const codigoRecepcionEventoSignificativo = result.codigoRecepcionEventoSignificativo;
+		evento = eventosSignificativos.find(
+			(e) => e.codigoRecepcionEventoSignificativo === codigoRecepcionEventoSignificativo
+		);
+		if (!evento) {
+			throw new Error('No se encontró el evento registrado');
+		}
 	}
 	evento.cufdEvento = cufdEvento;
 	return evento;
@@ -425,7 +442,7 @@ export async function validarFacturas(eventoSignificativo: SiatEventoSignificati
 	const requestData = {
 		codigoAmbiente: get(codigoAmbiente),
 		codigoDocumentoSector: get(codigoDocumentoSector),
-		codigoEmision: get(codigoTipoEmision),
+		codigoEmision: get(codigoTipoEmision) === 1 ? 2 : get(codigoTipoEmision),
 		codigoModalidad: get(codigoModalidad),
 		codigoPuntoVenta: get(codigoPuntoVenta),
 		codigoSistema: get(codigoSistema),
@@ -465,7 +482,7 @@ export async function verificarNit(_nit: string) {
 	}
 	return true;
 }
-export async function loadEventosSignificativos() {
+export async function loadEventosSignificativos(fecha:Date=null) {
 	const response = await facturacionOperacionesService.consultaEventoSignificativo({
 		codigoAmbiente: get(codigoAmbiente),
 		codigoSistema: get(codigoSistema),
@@ -474,7 +491,7 @@ export async function loadEventosSignificativos() {
 		nit: get(nit),
 		codigoPuntoVenta: get(codigoPuntoVenta),
 		cufd: get(cufd)?.codigo,
-		fechaEvento: siatISOdateTime(startOfDay(new Date()))
+		fechaEvento: siatISOdateTime(startOfDay(fecha || new Date()))
 	});
 	if (!response.ok) {
 		throw new Error('Error al cargar eventos significativos: ' + (await response.text()));
@@ -515,4 +532,129 @@ export function addToCart(product: Producto, cart) {
 		}
 	}, 100);
 	return updateAllCart(cart);
+}
+
+async function verificarComunicacion() {
+	try {
+		const response = await facturacionCompraVentaService.verificarComunicacion({
+			codigoAmbiente: get(codigoAmbiente)
+		});
+		if (!response.ok) {
+			return 2;
+		}
+		return 1;
+	} catch (error) {
+		return 3;
+	}
+}
+
+export async function volverEnLinea() {
+	if (get(codigoTipoEmision) === 1) return;
+	if (!get(facturacionFueraDeLinea)) {
+		snackBar.show('No se puede volver en linea, no se encuentra fuera de linea');
+		return;
+	}
+	if ((await verificarComunicacion()) !== 1) {
+		snackBar.show('No se puede volver en linea, no se puede comunicar con el servidor Siat');
+		return;
+	}
+	try {
+		const fechaHoraFinEvento = new Date();
+		const fechaHoraInicioEvento = new Date(get(facturacionFueraDeLinea).fechaInicio);
+		await validarPaquete({
+			codigoEvento: get(facturacionFueraDeLinea)?.codigoEvento,
+			cufdEvento: get(facturacionFueraDeLinea)?.cufdEvento,
+			fechaHoraInicioEvento,
+			fechaHoraFinEvento,
+			descripcion: get(facturacionFueraDeLinea)?.descripcion
+		});
+		codigoTipoEmision.sync(1); // en linea
+		facturacionFueraDeLineaHistoryUpdate(get(facturacionFueraDeLinea));
+		facturacionFueraDeLinea.flush();
+	} catch (error) {
+		snackBar.show((error as Error).message);
+		throw error;
+	}
+}
+export async function validarPaquete({
+	codigoEvento,
+	cufdEvento,
+	fechaHoraInicioEvento,
+	fechaHoraFinEvento,
+	descripcion = 'Evento inesperado'
+}: {
+	codigoEvento: number;
+	cufdEvento: SiatCufd;
+	fechaHoraInicioEvento: Date;
+	fechaHoraFinEvento: Date;
+	descripcion?: string;
+}) {
+	if ((await verificarComunicacion()) !== 1) {
+		throw new Error('No se puede comunicar con el servidor Siat');
+	}
+	if (fechaHoraFinEvento < fechaHoraInicioEvento) {
+		throw new Error('Error, la fecha de inicio del evento es mayor a la fecha actual');
+	}
+
+	// add 1 minute to fechaHoraFinEvento if is less than 1 minute
+	if (fechaHoraFinEvento.getTime() - fechaHoraInicioEvento.getTime() < 60000) {
+		// substract 1 minute from fechaInicio if fecha fin is less than now
+		if (fechaHoraFinEvento.getTime() > new Date().getTime()) {
+			fechaHoraInicioEvento = new Date(fechaHoraInicioEvento.getTime() - 60000);
+		}else {
+			fechaHoraFinEvento = new Date(fechaHoraInicioEvento.getTime() + 60000);
+		}
+	}
+	// si no paso almenos 1 minuto no se puede volver en linea
+	// if(fechaHoraInicioEvento.getTime() - fechaHoraFinEvento.getTime() < 60000) {
+	// 	snackBar.show('No se puede volver en linea, debe pasar almenos 1 minuto desde que se salio de linea, faltan' + (60000 - (fechaHoraInicioEvento.getTime() - fechaHoraFinEvento.getTime())) + 'ms');
+	// 	return;
+	// }
+	// optener facturas pendientes de cufd
+	const pendientes = await facturacionPrepararFacturaService.facturasPendientes();
+	if (!pendientes.ok) {
+		throw new Error('No se puede validar, error de comunicacion con el servidor local');
+	}
+	const _pendientes = (await pendientes.json()) as Factura[];
+	if (_pendientes?.length > 0) {
+		const conatined = _pendientes.find((f) => f.cufd === cufdEvento?.codigo);
+		if (conatined) {
+			const evento = await registrarEvento(
+				codigoEvento,
+				cufdEvento,
+				fechaHoraInicioEvento,
+				fechaHoraFinEvento,
+				descripcion
+			);
+			const validacion = await validarFacturas(evento);
+			snackBar.show('Facturas validadas correctamente');
+		} else {
+			snackBar.show('No se puede validar, no se encuentran las facturas');
+		}
+	} else {
+		snackBar.show('No hay facturas pendientes de cufd');
+	}
+}
+export async function ponerFueraDeLinea(
+	codigoMotivoEvento = 1,
+	descripcion = 'Sin conexión a internet'
+) {
+	if (get(codigoTipoEmision) === 2) return;
+	try {
+		const fueraDeLinea: SiatFueraDeLinea = {
+			codigoEvento: codigoMotivoEvento,
+			descripcion: descripcion,
+			fechaInicio: new Date().toISOString(),
+			cufdEvento: get(cufd)
+		};
+		facturacionFueraDeLinea.sync(fueraDeLinea);
+		codigoTipoEmision.sync(2); // fuera de linea
+		snackBar.show('Facturación fuera de línea habilitada');
+	} catch (error) {
+		snackBar.show((error as Error).message);
+		throw error;
+	}
+	// finally{
+	// 	codigoTipoEmision.sync(2);
+	// }
 }

@@ -141,135 +141,153 @@ function loadStore() {
 	eventoSignificativo.load();
 	facturacionFueraDeLinea.load();
 }
+const syncParametricas = async () => {
+	const requestData = {
+		codigoPuntoVenta: get(codigoPuntoVenta),
+		codigoSucursal: get(codigoSucursal),
+		codigoAmbiente: get(codigoAmbiente),
+		codigoSistema: get(codigoSistema),
+		cuis: get(cuis)?.codigo,
+		nit: get(nit),
+		codigoModalidad: get(codigoModalidad)
+	};
+	const responses = await Promise.all([
+		facturacionSincronizacionService.sincronizarParametricaMotivoAnulacion(requestData),
+		facturacionSincronizacionService.sincronizarActividades(requestData),
+		// facturacionSincronizacionService.sincronizarFechaHora(requestData),
+		facturacionSincronizacionService.sincronizarListaLeyendasFactura(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoHabitacion(requestData),
+		facturacionSincronizacionService.sincronizarListaActividadesDocumentoSector(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoDocumentoIdentidad(requestData),
+		facturacionSincronizacionService.sincronizarParametricaUnidadMedida(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoDocumentoSector(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTiposFactura(requestData),
+		// facturacionSincronizacionService.verificarComunicacion(requestData),
+		facturacionSincronizacionService.sincronizarListaMensajesServicios(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoMetodoPago(requestData),
+		facturacionSincronizacionService.sincronizarParametricaEventosSignificativos(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoPuntoVenta(requestData),
+		facturacionSincronizacionService.sincronizarListaProductosServicios(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoEmision(requestData),
+		facturacionSincronizacionService.sincronizarParametricaPaisOrigen(requestData),
+		facturacionSincronizacionService.sincronizarParametricaTipoMoneda(requestData)
+	]);
+	let index = 0;
+	const allOk = responses.every((response) => {
+		if (response.ok) {
+			return true;
+		}
+		return false;
+	});
+	for (const response of responses) {
+		if (response.ok) {
+			const data = await response.json();
+			console.log(data);
+			if (data.transaccion === true) {
+				switch (index) {
+					case 0:
+						parametricaMotivoDeAnulacion = data.listaCodigos;
+						break;
+					case 1:
+						actividades = data.listaActividades;
+						break;
+					// case 2:
+					// 	fechaHora = data.fechaHora;
+					// 	break;
+					case 2:
+						listaLeyendasFactura = data.listaLeyendas;
+						break;
+					case 3:
+						parametricaTipoHabitacion = data.listaCodigos;
+						break;
+					case 4:
+						listaActividadesDocumentoSector = data.listaActividadesDocumentoSector;
+						break;
+					case 5:
+						parametricaTipoDocumentoIdentidad = data.listaCodigos;
+						break;
+					case 6:
+						parametricaUnidadMedida = data.listaCodigos;
+						break;
+					case 7:
+						parametricaTipoDocumentoSector = data.listaCodigos;
+						break;
+					case 8:
+						parametricaTiposFactura = data.listaCodigos;
+						break;
+					case 9:
+						listaMensajesServicios = data.listaCodigos;
+						break;
+					case 10:
+						parametricaTipoMetodoPago = data.listaCodigos;
+						break;
+					case 11:
+						parametricaEventosSignificativos = data.listaCodigos;
+						break;
+					case 12:
+						parametricaTipoPuntoVenta = data.listaCodigos;
+						break;
+					case 13:
+						listaProductosServicios = data.listaCodigos;
+						break;
+					case 14:
+						parametricaTipoEmision = data.listaCodigos;
+						break;
+					case 15:
+						parametricaPaisOrigen = data.listaCodigos;
+						break;
+					case 16:
+						parametricaTipoMoneda = data.listaCodigos;
+						break;
+				}
+			}
+			index++;
+		}
+	}
+	const allParams = {
+		parametricaMotivoDeAnulacion,
+		actividades,
+		fechaHora,
+		listaLeyendasFactura,
+		parametricaTipoHabitacion,
+		listaActividadesDocumentoSector,
+		parametricaTipoDocumentoIdentidad,
+		parametricaUnidadMedida,
+		parametricaTipoDocumentoSector,
+		parametricaTiposFactura,
+		verificarComunicacion,
+		listaMensajesServicios,
+		parametricaTipoMetodoPago,
+		parametricaEventosSignificativos,
+		parametricaTipoPuntoVenta,
+		listaProductosServicios,
+		parametricaTipoEmision,
+		parametricaPaisOrigen,
+		parametricaTipoMoneda
+	};
+	if(allOk){
+		// save to store storeParametricas
+		storeParametricas.sync(allParams);
+	}
+	return allParams;
+}
 
 async function loadAllLists() {
 	try {
-		const requestData = {
-			codigoPuntoVenta: get(codigoPuntoVenta),
-			codigoSucursal: get(codigoSucursal),
-			codigoAmbiente: get(codigoAmbiente),
-			codigoSistema: get(codigoSistema),
-			cuis: get(cuis)?.codigo,
-			nit: get(nit),
-			codigoModalidad: get(codigoModalidad)
-		};
-		const responses = await Promise.all([
-			facturacionSincronizacionService.sincronizarParametricaMotivoAnulacion(requestData),
-			facturacionSincronizacionService.sincronizarActividades(requestData),
-			facturacionSincronizacionService.sincronizarFechaHora(requestData),
-			facturacionSincronizacionService.sincronizarListaLeyendasFactura(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoHabitacion(requestData),
-			facturacionSincronizacionService.sincronizarListaActividadesDocumentoSector(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoDocumentoIdentidad(requestData),
-			facturacionSincronizacionService.sincronizarParametricaUnidadMedida(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoDocumentoSector(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTiposFactura(requestData),
-			facturacionSincronizacionService.verificarComunicacion(requestData),
-			facturacionSincronizacionService.sincronizarListaMensajesServicios(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoMetodoPago(requestData),
-			facturacionSincronizacionService.sincronizarParametricaEventosSignificativos(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoPuntoVenta(requestData),
-			facturacionSincronizacionService.sincronizarListaProductosServicios(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoEmision(requestData),
-			facturacionSincronizacionService.sincronizarParametricaPaisOrigen(requestData),
-			facturacionSincronizacionService.sincronizarParametricaTipoMoneda(requestData)
-		]);
-		let index = 0;
-		for (const response of responses) {
-			if (response.ok) {
-				const data = await response.json();
-				console.log(data);
-				if (data.transaccion === true) {
-					switch (index) {
-						case 0:
-							parametricaMotivoDeAnulacion = data.listaCodigos;
-							break;
-						case 1:
-							actividades = data.listaActividades;
-							break;
-						case 2:
-							fechaHora = data.fechaHora;
-							break;
-						case 3:
-							listaLeyendasFactura = data.listaLeyendas;
-							break;
-						case 4:
-							parametricaTipoHabitacion = data.listaCodigos;
-							break;
-						case 5:
-							listaActividadesDocumentoSector = data.listaActividadesDocumentoSector;
-							break;
-						case 6:
-							parametricaTipoDocumentoIdentidad = data.listaCodigos;
-							break;
-						case 7:
-							parametricaUnidadMedida = data.listaCodigos;
-							break;
-						case 8:
-							parametricaTipoDocumentoSector = data.listaCodigos;
-							break;
-						case 9:
-							parametricaTiposFactura = data.listaCodigos;
-							break;
-						case 10:
-							verificarComunicacion = data.mensajesList;
-							break;
-						case 11:
-							listaMensajesServicios = data.listaCodigos;
-							break;
-						case 12:
-							parametricaTipoMetodoPago = data.listaCodigos;
-							break;
-						case 13:
-							parametricaEventosSignificativos = data.listaCodigos;
-							break;
-						case 14:
-							parametricaTipoPuntoVenta = data.listaCodigos;
-							break;
-						case 15:
-							listaProductosServicios = data.listaCodigos;
-							break;
-						case 16:
-							parametricaTipoEmision = data.listaCodigos;
-							break;
-						case 17:
-							parametricaPaisOrigen = data.listaCodigos;
-							break;
-						case 18:
-							parametricaTipoMoneda = data.listaCodigos;
-							break;
-					}
-				}
-				index++;
+		const allParams = get(storeParametricas);
+		if (allParams === null || (allParams?.parametricaTipoEmision?.length || []) === 0) {
+			await syncParametricas();
+		} else {
+			// execute in another thread
+			setTimeout(async () => {
+				await syncParametricas();
 			}
+			, 0);
 		}
-		const allParams = {
-			parametricaMotivoDeAnulacion,
-			actividades,
-			fechaHora,
-			listaLeyendasFactura,
-			parametricaTipoHabitacion,
-			listaActividadesDocumentoSector,
-			parametricaTipoDocumentoIdentidad,
-			parametricaUnidadMedida,
-			parametricaTipoDocumentoSector,
-			parametricaTiposFactura,
-			verificarComunicacion,
-			listaMensajesServicios,
-			parametricaTipoMetodoPago,
-			parametricaEventosSignificativos,
-			parametricaTipoPuntoVenta,
-			listaProductosServicios,
-			parametricaTipoEmision,
-			parametricaPaisOrigen,
-			parametricaTipoMoneda
-		}
-		storeParametricas.sync(allParams);
 	} catch (error) {
 		// load from store storeParametricas
 		const allParams = get(storeParametricas);
 		if (allParams !== null) {
-			
 			parametricaMotivoDeAnulacion = allParams.parametricaMotivoDeAnulacion;
 			actividades = allParams.actividades;
 			fechaHora = allParams.fechaHora;
@@ -289,8 +307,6 @@ async function loadAllLists() {
 			parametricaTipoEmision = allParams.parametricaTipoEmision;
 			parametricaPaisOrigen = allParams.parametricaPaisOrigen;
 			parametricaTipoMoneda = allParams.parametricaTipoMoneda;
-
-
 		}
 		console.log(error);
 	}

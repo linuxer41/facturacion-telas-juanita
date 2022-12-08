@@ -44,7 +44,7 @@
 			if (evento) {
 				dispatch('evento', evento);
 			}
-			facturacionManual.sync(true)
+			facturacionManual.sync(true);
 		} catch (error) {
 			snackBar.show((error as Error).message);
 		}
@@ -85,7 +85,7 @@
 			<div>
 				<label for="">Tipo de evento</label>
 				<select name="Metodo de pago" id="" bind:value={siatExtraData.codigoMotivoEvento}>
-					{#each (parametricaEventosSignificativos || []).slice(4,7) as evento}
+					{#each (parametricaEventosSignificativos || []).slice(4, 7) as evento}
 						<option value={evento.codigoClasificador}>{evento.descripcion}</option>
 					{/each}
 				</select>
@@ -100,11 +100,13 @@
 			</div>
 			<div>
 				<label for="">Cafc</label>
-				<input type="text" 
-				name="cafc"
-				id="cafc"
-				value={$cafc}
-				on:change={(e) => cafc.sync(e.currentTarget.value)}/>
+				<input
+					type="text"
+					name="cafc"
+					id="cafc"
+					value={$cafc}
+					on:change={(e) => cafc.sync(e.currentTarget.value)}
+				/>
 			</div>
 			<div>
 				<button on:click={_registrarEvento}> Confirmar </button>

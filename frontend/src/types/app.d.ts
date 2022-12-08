@@ -134,25 +134,24 @@ interface Cotizacion {
 	__entity: string;
 }
 interface Usuario {
-	id:        number;
-	email:     string;
-	provider:  string;
-	socialId:  null;
+	id: number;
+	email: string;
+	provider: string;
+	socialId: null;
 	firstName: string;
-	lastName:  string;
+	lastName: string;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: null;
-	photo:     null;
-	role:      Role;
-	status:    Role;
+	photo: null;
+	role: Role;
+	status: Role;
 }
 
 interface Role {
-	id:       number;
-	name:     string;
+	id: number;
+	name: string;
 }
-
 
 interface Item {
 	medida: string;

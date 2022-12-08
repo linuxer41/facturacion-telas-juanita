@@ -158,8 +158,15 @@ const cuisHistory = syncWritable<SiatCuis[]>([], 'cuisHistory');
 const cufdHistory = syncWritable<SiatCufd[]>([], 'cufdHistory');
 const eventoSignificativo = syncWritable<SiatEventoSignificativo>(null, 'eventoSignificativo');
 const facturacionFueraDeLinea = syncWritable<SiatFueraDeLinea>(null, 'facturacionFueraDeLinea');
+const facturacionFueraDeLineaHistory = syncWritable<SiatFueraDeLinea[]>(
+	[],
+	'facturacionFueraDeLineaHistory'
+);
 const authToken = syncWritable<string>(null, 'authToken');
-const siatApiKey = syncWritable<string>('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJGcmFuY28wMTIiLCJjb2RpZ29TaXN0ZW1hIjoiNzIxQTVBRTE1REMzMzVCRjY3NjM4QjYiLCJuaXQiOiJINHNJQUFBQUFBQUFBRE14TkRHek5ETXdNRFFDQUFvRE1xWUtBQUFBIiwiaWQiOjQ5MDUxNCwiZXhwIjoxNjkwNTg4ODAwLCJpYXQiOjE2NTkwNzI1NTQsIm5pdERlbGVnYWRvIjo0MTQ2OTYwMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.1joGHujUq470w59si0gRqaw4fkfd13QkBOOOETtw1dKDYA7ZH7JreZMHyYBiAWB2chVntnwx-x4ezNFBT1NQdw', 'siatApiKey');
+const siatApiKey = syncWritable<string>(
+	'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJGcmFuY28wMTIiLCJjb2RpZ29TaXN0ZW1hIjoiNzIxQTVBRTE1REMzMzVCRjY3NjM4QjYiLCJuaXQiOiJINHNJQUFBQUFBQUFBRE14TkRHek5ETXdNRFFDQUFvRE1xWUtBQUFBIiwiaWQiOjQ5MDUxNCwiZXhwIjoxNjkwNTg4ODAwLCJpYXQiOjE2NTkwNzI1NTQsIm5pdERlbGVnYWRvIjo0MTQ2OTYwMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.1joGHujUq470w59si0gRqaw4fkfd13QkBOOOETtw1dKDYA7ZH7JreZMHyYBiAWB2chVntnwx-x4ezNFBT1NQdw',
+	'siatApiKey'
+);
 const user = syncWritable<Usuario>(null, 'user');
 const storeParametricas = syncWritable<any>(null, 'parametricas');
 
@@ -193,5 +200,6 @@ export {
 	user,
 	storeCart,
 	siatApiKey,
-	storeParametricas
+	storeParametricas,
+	facturacionFueraDeLineaHistory
 };

@@ -4,11 +4,21 @@
 	import { getIcon } from '$lib/core/icons';
 	import {
 		clienteService,
+		facturacionCompraVentaService,
+		facturacionOperacionesService,
 		facturacionPrepararFacturaService,
 		facturaService,
 		productoService
 	} from '$lib/core/services';
-	import { eventoSignificativo, facturacionManual, snackBar, storeCart, storeCarts } from '$lib/core/store';
+	import {
+		codigoAmbiente,
+		codigoTipoEmision,
+		eventoSignificativo,
+		facturacionManual,
+		snackBar,
+		storeCart,
+		storeCarts
+	} from '$lib/core/store';
 	import { debounce, formatCurrency } from '$lib/core/utils';
 
 	import DocumentRenderer from '$lib/components/common/DocumentRenderer.svelte';
@@ -19,7 +29,9 @@
 		enviarFactura,
 		cartsHistoryUpdate,
 		updateAllCart,
-		addToCart
+		addToCart,
+		ponerFueraDeLinea,
+		volverEnLinea
 	} from '$lib/core/api_tools';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import QuotationDocument from '../documents/QuotationDocument.svelte';
@@ -170,7 +182,7 @@
 				// 		console.log('loaded', window.electron);
 				// 		if(window.electron){
 				// 			setTimeout(async() => {
-	
+
 				// 				await window.electron.invoke('printChildWindow', {
 				// 					silent: false
 				// 				});
@@ -184,35 +196,38 @@
 				var iframe = document.createElement('iframe');
 				document.body.appendChild(iframe);
 				iframe.style.display = 'none';
-				iframe.onload = function() {
-					setTimeout(function() {
+				iframe.onload = function () {
+					setTimeout(function () {
 						iframe.focus();
 						iframe.contentWindow.print();
-						setTimeout(function() {
+						setTimeout(function () {
 							document.body.removeChild(iframe);
 						}, 1000 * 60 * 15);
-
 					}, 0);
-					
 				};
 				iframe.src = url;
-				const form = new FormData()
-				form.append('file', blob, `factura_${toRenderDocument?.json?.cabecera?.numeroFactura || 1}_${toRenderDocument.cuf}.pdf`)
+				const form = new FormData();
+				form.append(
+					'file',
+					blob,
+					`factura_${toRenderDocument?.json?.cabecera?.numeroFactura || 1}_${
+						toRenderDocument.cuf
+					}.pdf`
+				);
 				const _response = await fetch(`${SETTINGS.apiUrl}/v1/files/invoice/upload`, {
 					method: 'POST',
 					body: form
-				})
+				});
 				if (!_response.ok) {
-					throw new Error("Error al subir el archivo");
-					
+					throw new Error('Error al subir el archivo');
 				}
-				const _json = await _response.json()
-				const pdfUrl = _json[0].path
+				const _json = await _response.json();
+				const pdfUrl = _json[0].path;
 				const facturaResponse = await facturaService.patch(toRenderDocument.id, {
 					pdf: pdfUrl
-				})
+				});
 				if (!facturaResponse.ok) {
-					throw new Error("Error al actualizar la factura");
+					throw new Error('Error al actualizar la factura');
 				}
 				// no esperar a que se suba el archivo
 				facturacionPrepararFacturaService.enviarEmailFactura({
@@ -244,6 +259,7 @@
 			}
 		}
 	}
+
 	async function procesarFactura() {
 		try {
 			for (const item of cart?.items || []) {
@@ -252,7 +268,7 @@
 					return;
 				}
 			}
-			if(cart.montoTotal<=0){
+			if (cart.montoTotal <= 0) {
 				snackBar.show('El monto total debe ser mayor a 0');
 				return;
 			}
@@ -264,13 +280,14 @@
 				snackBar.show('No se puede facturar durante un evento significativo');
 				return;
 			}
+
 			loading = 'factura';
 
 			const factura =
 				isContingencia && $facturacionManual
 					? await enviarFactura(cart, new Date(fechaEmision), Number(numeroFactura))
 					: await enviarFactura(cart, new Date());
-			console.log({valid:isContingencia && $facturacionManual, fechaEmision});
+			// console.log({valid:isContingencia && $facturacionManual, fechaEmision});
 			snackBar.show('Factura enviada correctamente. tipo de Emision: ' + factura.tipoEmision);
 			dispatch('factura', factura);
 			cart = emptyCart();
@@ -310,56 +327,56 @@
 		snackBar.show(message);
 	}
 
+	let is_ctrl_down = false;
+	let is_h_down = false;
 
-    let is_ctrl_down = false;
-    let is_h_down = false;
+	function on_key_down(event) {
+		// `keydown` event is fired while the physical key is held down.
 
-    function on_key_down(event) {
-        // `keydown` event is fired while the physical key is held down.
+		// Assuming you only want to handle the first press, we early
+		// return to skip.
+		if (event.repeat) return;
 
-        // Assuming you only want to handle the first press, we early
-        // return to skip.
-        if (event.repeat) return;
-
-        // In the switch-case we're updating our boolean flags whenever the
-        // desired bound keys are pressed.
+		// In the switch-case we're updating our boolean flags whenever the
+		// desired bound keys are pressed.
 		console.log(event.key);
-        switch (event.key) {
-            case "F4":
+		switch (event.key) {
+			case 'F4':
 				showSelectProduct = true;
 
-                // By using `preventDefault`, it tells the Browser not to handle the
-                // key stroke for its own shortcuts or text input.
-                event.preventDefault();
-                break;
+				// By using `preventDefault`, it tells the Browser not to handle the
+				// key stroke for its own shortcuts or text input.
+				event.preventDefault();
+				break;
 
-            case "F5":
-                event.preventDefault();
+			case 'F5':
+				event.preventDefault();
 				procesarFactura();
-                break;
-            case "F6":
-                event.preventDefault();
+				break;
+			case 'F6':
+				event.preventDefault();
 				const nitInput = document.querySelector('#nit-input') as HTMLInputElement;
-				if(nitInput){
+				if (nitInput) {
 					nitInput.focus();
 				}
-                break;
-            case "F7":
-                event.preventDefault();
+				break;
+			case 'F7':
+				event.preventDefault();
 				cart = emptyCart();
 				//@ts-ignore
 				focusedItem = undefined;
-                break;
-        }
-    }
-
+				break;
+		}
+	}
 
 	onMount(async () => {
-		const _storeCart = $storeCart
+		const _storeCart = $storeCart;
 		if (_storeCart) {
 			cart = _storeCart;
 		}
-		const inputs = document.querySelectorAll('input:not([type="submit"]):not([type="email"]):not([type="password"])');
+		const inputs = document.querySelectorAll(
+			'input:not([type="submit"]):not([type="email"]):not([type="password"])'
+		);
 		// document.querySelector('input')?.addEventListener('input', function (event) {
 		// 	event.target.value = event.target.value.toLocaleUpperCase();
 		// });
@@ -380,7 +397,7 @@
 		// 	window.electron.invoke('closeWindow');
 		// }
 		if (cart) {
-			storeCart.sync(cart)
+			storeCart.sync(cart);
 		}
 	});
 </script>
@@ -551,7 +568,11 @@
 			</label>
 			<label for="cliente">
 				Cliente:
-				<input type="text" bind:value={cart.cliente.name} on:keyup={(e)=>cart.cliente.name=e.currentTarget.value.toLocaleUpperCase()} />
+				<input
+					type="text"
+					bind:value={cart.cliente.name}
+					on:keyup={(e) => (cart.cliente.name = e.currentTarget.value.toLocaleUpperCase())}
+				/>
 			</label>
 			<label for="email">
 				Correo:
@@ -580,11 +601,14 @@
 </div>
 
 {#if showSelectProduct}
-<SearchProductsModal on:close={() => (showSelectProduct = false)} on:select={(e)=>{
-	cart = addToCart(e.detail, cart); showSelectProduct = false;
-	}} />
+	<SearchProductsModal
+		on:close={() => (showSelectProduct = false)}
+		on:select={(e) => {
+			cart = addToCart(e.detail, cart);
+			showSelectProduct = false;
+		}}
+	/>
 {/if}
-
 
 {#if showDetalleFactura}
 	<DetalleFacturaModal
@@ -611,9 +635,7 @@
 		<QuotationDocument on:ready={onQuotationReady} data={toRenderCotizacion} presentation="roll" />
 	</DocumentRenderer>
 {/if}
-<svelte:window
-    on:keydown={on_key_down}
-/>
+<svelte:window on:keydown={on_key_down} />
 
 <style lang="scss">
 	.board {

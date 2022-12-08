@@ -64,11 +64,15 @@ let FacturasService = class FacturasService {
             take: take,
             skip: skip,
         };
+        if (query.orderBy) {
+            _query.order = { [query.orderBy]: query.order || 'ASC' };
+        }
         if (filter.length > 0) {
             _query['where'] = filter;
         }
+        console.log(_query);
         const queryBuilder = this.facturasRepository.createQueryBuilder('factura');
-        queryBuilder.orderBy('factura.numero', 'DESC');
+        queryBuilder.orderBy(`factura.${query.orderBy || 'numero'}`, query.order || 'DESC');
         queryBuilder.leftJoinAndSelect('factura.user', 'user');
         queryBuilder.take(take);
         queryBuilder.skip(skip);
@@ -174,6 +178,17 @@ let FacturasService = class FacturasService {
                 cufd: cufd,
             },
         });
+    }
+    async selectPendingCuisAndCount() {
+        return this.facturasRepository.query(`
+    SELECT COUNT(*) as total, cufd, min("fechaFactura") as "fechaInicio", max("fechaFactura") as "fechaFin",
+    ARRAY_AGG(numero) as numeros
+    FROM factura WHERE estado = 'PENDIENTE'
+    AND "tipoEmision" != 'EN LINEA' AND
+    xml IS NOT NULL
+    AND cufd IS NOT NULL
+    GROUP BY cufd
+    `);
     }
 };
 FacturasService = __decorate([

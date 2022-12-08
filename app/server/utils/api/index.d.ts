@@ -10,4 +10,6 @@ export declare function paginateResponse(data: any, page: number, limit: number)
 export declare class BaseQueryDto {
     page: number;
     limit: number;
+    orderBy: string;
+    order: string;
 }

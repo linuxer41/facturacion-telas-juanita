@@ -61,6 +61,15 @@ let PrepararFacturaController = class PrepararFacturaController {
             throw new common_1.BadRequestException(error.message);
         }
     }
+    async facturasPendientes() {
+        try {
+            return await this.prepararFacturaService.facturasPendientes();
+        }
+        catch (error) {
+            console.log({ error });
+            throw new common_1.BadRequestException(error.message);
+        }
+    }
 };
 __decorate([
     (0, common_1.Post)('facturaCompraVenta'),
@@ -112,6 +121,16 @@ __decorate([
     __metadata("design:paramtypes", [SolicitudAnularEmailFactura_dto_1.SolicitudAnularEmailFacturaDTO]),
     __metadata("design:returntype", Promise)
 ], PrepararFacturaController.prototype, "anularEmailFactura", null);
+__decorate([
+    (0, common_1.Get)('facturasPendientes'),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Texto de factura electronica xml',
+    }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrepararFacturaController.prototype, "facturasPendientes", null);
 PrepararFacturaController = __decorate([
     (0, global_decorator_1.CredentialApiHeaders)(),
     (0, swagger_1.ApiTags)('preparar-factura'),

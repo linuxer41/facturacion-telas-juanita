@@ -12,5 +12,12 @@
 		"noImplicitAny": false,
 		"strictNullChecks": false
 	},
-	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte", "src/**/*.cjs", "static/+layout.ts"]
+	"include": [
+		"src/**/*.d.ts",
+		"src/**/*.js",
+		"src/**/*.ts",
+		"src/**/*.svelte",
+		"src/**/*.cjs",
+		"static/+layout.ts"
+	]
 }

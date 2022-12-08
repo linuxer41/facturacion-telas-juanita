@@ -107,27 +107,52 @@ let PrepararFacturaService = class PrepararFacturaService {
         if (Boolean(recepcion.transaccion) !== true) {
             throw new passport_headerapikey_1.BadRequestError(recepcion === null || recepcion === void 0 ? void 0 : recepcion.mensajesList);
         }
-        await new Promise((resolve) => setTimeout(resolve, 15000));
-        const validacion = await this.servicioFacturacionCompraVentaService.validacionRecepcionPaqueteFactura(credential, {
-            codigoAmbiente: solicitud.codigoAmbiente,
-            codigoDocumentoSector: solicitud.codigoDocumentoSector,
-            codigoEmision: solicitud.codigoEmision,
-            codigoModalidad: solicitud.codigoModalidad,
-            codigoPuntoVenta: solicitud.codigoPuntoVenta,
-            codigoSistema: solicitud.codigoSistema,
-            codigoSucursal: solicitud.codigoSucursal,
-            cufd: solicitud.cufd,
-            cuis: solicitud.cuis,
-            nit: solicitud.nit,
-            tipoFacturaDocumento: solicitud.tipoFacturaDocumento,
-            codigoRecepcion: recepcion.codigoRecepcion,
-        });
+        let estadoValidacion = 'PENDIENTE';
+        let validacion = {};
+        let attempts = 0;
+        const maxAttempts = 100;
+        while (estadoValidacion === 'PENDIENTE') {
+            validacion =
+                await this.servicioFacturacionCompraVentaService.validacionRecepcionPaqueteFactura(credential, {
+                    codigoAmbiente: solicitud.codigoAmbiente,
+                    codigoDocumentoSector: solicitud.codigoDocumentoSector,
+                    codigoEmision: solicitud.codigoEmision,
+                    codigoModalidad: solicitud.codigoModalidad,
+                    codigoPuntoVenta: solicitud.codigoPuntoVenta,
+                    codigoSistema: solicitud.codigoSistema,
+                    codigoSucursal: solicitud.codigoSucursal,
+                    cufd: solicitud.cufd,
+                    cuis: solicitud.cuis,
+                    nit: solicitud.nit,
+                    tipoFacturaDocumento: solicitud.tipoFacturaDocumento,
+                    codigoRecepcion: recepcion.codigoRecepcion,
+                });
+            console.log({ validacion });
+            estadoValidacion = validacion === null || validacion === void 0 ? void 0 : validacion.codigoDescripcion;
+            attempts++;
+            if (estadoValidacion === 'PENDIENTE') {
+                if (attempts > maxAttempts) {
+                    throw new passport_headerapikey_1.BadRequestError('Intentos de validacion excedidos');
+                }
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
+        }
+        let history = [];
+        try {
+            history = JSON.parse(fs.readFileSync('validacion.json', 'utf8'));
+        }
+        catch (error) {
+            console.log('error', error);
+        }
+        if ((history === null || history === void 0 ? void 0 : history.length) > 1000) {
+            history.shift();
+        }
+        history.push(Object.assign(Object.assign({ cufd: solicitud.cufd }, validacion), { numeros: facturas.map((factura) => factura.numero) }));
+        fs.writeFileSync('validacion.json', JSON.stringify(history, null, 2));
         for (const factura of facturas) {
-            factura.estado =
-                validacion.codigoDescripcion === 'VALIDADA' ? 'VALIDADA' : 'RECHAZADA';
+            factura.estado = estadoValidacion;
             await this.facturasService.update(factura.id, factura);
         }
-        console.log({ validacion });
         console.log(Object.assign({}, validacion));
         return validacion;
     }
@@ -142,8 +167,8 @@ let PrepararFacturaService = class PrepararFacturaService {
             throw new passport_headerapikey_1.BadRequestError('Factura no encontrada');
         }
         const { xml, pdf } = factura;
-        const email = solicitud.email || (cliente === null || cliente === void 0 ? void 0 : cliente.email) || 'linuxer42@gmail.com';
-        if (pdf) {
+        const email = solicitud.email || (cliente === null || cliente === void 0 ? void 0 : cliente.email);
+        if (pdf && email) {
             await this.mailService.sendInvoiceMail({
                 to: email,
                 data: {
@@ -182,6 +207,9 @@ let PrepararFacturaService = class PrepararFacturaService {
             },
         });
         return { message: 'Email enviado' };
+    }
+    async facturasPendientes() {
+        return this.facturasService.selectPendingCuisAndCount();
     }
 };
 PrepararFacturaService = __decorate([

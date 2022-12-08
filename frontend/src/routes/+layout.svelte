@@ -17,9 +17,9 @@
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'
-				},
+				}
 			});
-			return true
+			return true;
 		} catch (error) {
 			return false;
 		}
@@ -29,10 +29,11 @@
 		let server = await checkServer();
 		while (!server) {
 			server = await checkServer();
-			await new Promise(r => setTimeout(r, 1000));
+			await new Promise((r) => setTimeout(r, 1000));
 		}
 		await loadCuis();
 		await loadCufd();
+		
 		await loadAllLists();
 		// run loadAllLists() again every 5 minutes if parametricaEventosSignificativos lenqth is 0
 		// setInterval(() => {
@@ -41,7 +42,9 @@
 		// 	}
 		// }, 15000);
 		// select all imput execpt the email, password and submit type
-		const inputs = document.querySelectorAll('input:not([type="submit"]):not([type="email"]):not([type="password"])');
+		const inputs = document.querySelectorAll(
+			'input:not([type="submit"]):not([type="email"]):not([type="password"])'
+		);
 		// document.querySelector('input')?.addEventListener('input', function (event) {
 		// 	event.target.value = event.target.value.toLocaleUpperCase();
 		// });
@@ -53,21 +56,19 @@
 		loading = false;
 	});
 </script>
-{#if loading}
-<div class="loading">
-	<InfinitySpinner />
-	<p>
-		Iniciando servicios SIAT...
-	</p>
-</div>
-{:else if $page.routeId !== 'auth'}
-<MainLayout>
-	<slot />
-</MainLayout>
-{:else}
-<slot />
-{/if}
 
+{#if loading}
+	<div class="loading">
+		<InfinitySpinner />
+		<p>Iniciando servicios SIAT...</p>
+	</div>
+{:else if $page.routeId !== 'auth'}
+	<MainLayout>
+		<slot />
+	</MainLayout>
+{:else}
+	<slot />
+{/if}
 
 {#if $snackBar}
 	<div
@@ -90,7 +91,7 @@
 	@import 'src/scss/icon';
 	@import 'src/scss/table';
 	@import 'src/scss/page';
-	.loading{
+	.loading {
 		display: flex;
 		flex-direction: column;
 		align-items: center;

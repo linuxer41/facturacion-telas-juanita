@@ -164,6 +164,80 @@ async function prepareAndDownload(
 	URL.revokeObjectURL(url);
 }
 
+async function prepareAndDownloadSiat(
+	data: any[],
+	columns: any[],
+	filename: string
+): Promise<void> {
+	const rows_per_page = 50;
+	const workbook = new Workbook();
+	workbook.creator = 'VENDEMAS';
+	workbook.created = new Date();
+	workbook.modified = new Date();
+	workbook.lastPrinted = new Date();
+	const worksheet = workbook.addWorksheet(filename, {
+		properties: {
+			tabColor: { argb: 'FFC0000' },
+			showGridLines: false
+		},
+		pageSetup: {
+			orientation: 'portrait',
+			paperSize: 9,
+			fitToPage: true,
+			fitToHeight:
+				data.length % rows_per_page
+					? Math.floor(data.length / rows_per_page)
+					: data.length / rows_per_page,
+			fitToWidth: 1,
+			margins: {
+				left: 0.7,
+				right: 0.7,
+				top: 0.75,
+				bottom: 0.75,
+				header: 0.3,
+				footer: 0.3
+			},
+			showGridLines: false
+		}
+	});
+	// create table
+	worksheet.columns = columns.map((column) => {
+		return {
+			header: column.header,
+			key: column.key,
+			width: column.width,
+			numFmt: column.numFmt,
+			style: {
+				alignment: {
+					vertical: 'middle'
+				},
+				numFmt: column.numFmt
+			}
+		};
+	});
+	worksheet.addRows(
+		// data.map((row) => {
+		// 	return columns.map((column) => {
+		// 		return row[column.key];
+		// 	})
+
+		// })
+		data
+	);
+
+	const buffer = await workbook.xlsx.writeBuffer();
+	// save buffer to file system whit a element
+	const blob = new Blob([buffer], {
+		type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+	});
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `${filename}_${format(new Date(), 'yy_MM_dd')}.xlsx`;
+	a.click();
+	URL.revokeObjectURL(url);
+}
+
 async function getImageArrayBuffer(url: string): Promise<ArrayBuffer> {
 	try {
 		const response = await fetch(url);
@@ -177,402 +251,220 @@ async function getImageArrayBuffer(url: string): Promise<ArrayBuffer> {
 	}
 }
 
-export async function downloadTransactions(
-	transactions: Transaction[],
+export async function downloadInvoices(
+	invoices: Factura[],
 	filename: string,
-	title = 'Reporte de ventas'
+	title = 'Reporte de facturas'
 ): Promise<void> {
 	const data = [];
-
-	for (const transaction of transactions) {
+	// {
+	// 	"Nº": 1,
+	// 	"ESPECIFICACION": 2,
+	// 	"FECHA DE LA FACTURA": "15-07-2022",
+	// 	"N° DE LA FACTURA": "49",
+	// 	"CODIGO DE AUTORIZACION": "463401200105854",
+	// 	"NIT \/ CI CLIENTE": "388432022",
+	// 	"COMPLEMENTO": "ch",
+	// 	"NOMBRE O RAZON SOCIAL": "CONSTRUCCIONES Y SERVICIOS LLANOSGARCIA S.R.L.",
+	// 	"IMPORTE TOTAL DE LA VENTA": 6144.4,
+	// 	"IMPORTE ICE": 0,
+	// 	"IMPORTE IEHD": 0,
+	// 	"IMPORTE IPJ": 0,
+	// 	"TASAS": 0,
+	// 	"OTROS NO SUJETOS AL IVA": 0,
+	// 	"EXPORTACIONES Y OPERACIONES EXENTAS": 0,
+	// 	"VENTAS GRAVADAS A TASA CERO": 0,
+	// 	"SUBTOTAL": 6144.4,
+	// 	"DESCUENTOS, BONIFICACIONES Y REBAJAS SUJETAS AL IVA": 0,
+	// 	"IMPORTE GIFT CARD": 0,
+	// 	"IMPORTE BASE PARA DEBITO FISCAL": 6144.4,
+	// 	"DEBITO FISCAL": 798.772,
+	// 	"ESTADO": "V",
+	// 	"CODIGO DE CONTROL": "74-C1-F9-64-75",
+	// 	"TIPO DE VENTA": 1
+	//    },
+	let index = 1;
+	for (const invoice of invoices) {
 		data.push({
-			created_at: formatDateTime(transaction.created_at),
-			customer: transaction.contact?.name || 'Sin nombre',
-			total_net: roundToTwo(transaction.total_net || 0),
-			total_costo: roundToTwo(transaction.total_cost || 0),
-			total_gross: roundToTwo(transaction.total_gross || 0),
-			total_discount: roundToTwo(transaction.total_discount || 0),
-			products: transaction.items.map((item) => item.product?.name || '').join(', '),
-			payment_type:
-				APP_PARAMS.transaction_payment_types.find(
-					(type) => type.key === transaction.payment_type_code
-				)?.label || '',
-			payment_method:
-				APP_PARAMS.transaction_payment_methods.find(
-					(method) => method.key === transaction.payment_method_code
-				)?.label || '',
-			user: transaction?.user?.first_name || ''
+			_id: index,
+			especificacion: 2,
+			fecha: format(new Date(invoice.fechaFactura), 'dd-MM-yyyy'),
+			numero: invoice.numero,
+			codigo_de_autorizacion: invoice.cuf,
+			nit: invoice.nit,
+			complemento: 'ch',
+			nombre: invoice.clientName || 'S/N',
+			total: invoice.total,
+			ice: 0,
+			iehd: 0,
+			ipj: 0,
+			tasas: 0,
+			otros: 0,
+			exportaciones: 0,
+			gravadas: 0,
+			subtotal: invoice.total,
+			descuentos: 0,
+			gift_card: 0,
+			base_debito_fiscal: invoice.total,
+			debito_fiscal: invoice.total * 0.13,
+			estado: invoice.estado === 'VALIDADA' ? 'V' : 'A',
+			codigo_de_control: 0,
+			tipo_de_venta: 1
 		});
+		index++;
 	}
 
 	const columns = [
 		{
-			key: 'created_at',
-			header: 'Fecha',
+			key: '_id',
+			header: 'Nº',
 			width: 20,
-			totalsRowFunction: 'none',
-			totalsRowLabel: 'Totales',
-			numberFormat: 'dd/mm/yyyy',
-			numFmt: '#,##0.00'
+			defaultValue: ''
 		},
 		{
-			key: 'customer',
-			header: 'Contacto',
+			key: 'especificacion',
+			header: 'ESPECIFICACION',
 			width: 30,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
+			defaultValue: 2
 		},
 		{
-			key: 'total_cost',
-			header: 'Total Costo',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_gross',
-			header: 'Total bruto',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_discount',
-			header: 'Descuento',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_net',
-			header: 'Total neto',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'products',
-			header: 'Productos',
+			key: 'fecha',
+			header: 'FECHA DE LA FACTURA',
 			width: 30,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
+			defaultValue: ''
+		},
+		{
+			key: 'numero',
+			header: 'N° DE LA FACTURA',
+			width: 30,
+			defaultValue: ''
+		},
+		{
+			key: 'codigo_de_autorizacion',
+			header: 'CODIGO DE AUTORIZACION',
+			width: 30,
+			defaultValue: ''
+		},
+		{
+			key: 'nit',
+			header: 'NIT / CI CLIENTE',
+			width: 30,
+			defaultValue: ''
+		},
+		{
+			key: 'complemento',
+			header: 'COMPLEMENTO',
+			width: 30,
+			defaultValue: 'ch'
+		},
+		{
+			key: 'nombre',
+			header: 'NOMBRE O RAZON SOCIAL',
+			width: 30,
+			defaultValue: ''
+		},
+		{
+			key: 'total',
+			header: 'IMPORTE TOTAL DE LA VENTA',
+			width: 30,
+			defaultValue: 0,
 			numFmt: '#,##0.00'
 		},
 		{
-			key: 'payment_type',
-			header: 'Tipo',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
+			key: 'ice',
+			header: 'IMPORTE ICE',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'iehd',
+			header: 'IMPORTE IEHD',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'ipj',
+			header: 'IMPORTE IPJ',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'tasas',
+			header: 'TASAS',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'otros',
+			header: 'OTROS NO SUJETOS AL IVA',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'exportaciones',
+			header: 'EXPORTACIONES Y OPERACIONES EXENTAS',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'gravadas',
+			header: 'VENTAS GRAVADAS A TASA CERO',
+			width: 30,
+			defaultValue: 0
+		},
+		{
+			key: 'subtotal',
+			header: 'SUBTOTAL',
+			width: 30,
+			defaultValue: 0,
 			numFmt: '#,##0.00'
 		},
 		{
-			key: 'payment_method',
-			header: 'Método de pago',
-			width: 15,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
+			key: 'descuentos',
+			header: 'DESCUENTOS, BONIFICACIONES Y REBAJAS SUJETAS AL IVA',
+			width: 30,
+			defaultValue: 0,
 			numFmt: '#,##0.00'
 		},
 		{
-			key: 'user',
-			header: 'Usuario',
-			width: 15,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
+			key: 'gift_card',
+			header: 'IMPORTE GIFT CARD',
+			width: 30,
+			defaultValue: 0,
 			numFmt: '#,##0.00'
+		},
+		{
+			key: 'base_debito_fiscal',
+			header: 'IMPORTE BASE PARA DEBITO FISCAL',
+			width: 30,
+			defaultValue: 0,
+			numFmt: '#,##0.00'
+		},
+		{
+			key: 'debito_fiscal',
+			header: 'DEBITO FISCAL',
+			width: 30,
+			defaultValue: 0,
+			numFmt: '#,##0.00'
+		},
+		{
+			key: 'estado',
+			header: 'ESTADO',
+			width: 30,
+			defaultValue: 'V'
+		},
+		{
+			key: 'codigo_de_control',
+			header: 'CODIGO DE CONTROL',
+			width: 30,
+			defaultValue: ''
+		},
+		{
+			key: 'tipo_de_venta',
+			header: 'TIPO DE VENTA',
+			width: 30,
+			defaultValue: 1
 		}
 	];
-	await prepareAndDownload(data, columns, filename, title);
-}
-
-export async function downloadDebts(
-	debts: Debt[],
-	filename: string,
-	title = 'Reporte de deudas'
-): Promise<void> {
-	const data = [];
-	for (const debt of debts) {
-		data.push({
-			created_at: formatDateTime(debt.created_at),
-			customer: debt.contact?.name || 'Sin nombre',
-			total_amount: roundToTwo(debt.total_amount || 0),
-			total_accumulated: roundToTwo(debt.total_accumulated || 0),
-			total_remaining: roundToTwo(debt.total_remaining || 0),
-			next_payment_date: dateFormater.format(debt.next_payment_date),
-			comment: debt.comment,
-			user: debt?.user?.first_name || ''
-		});
-	}
-	const columns = [
-		{
-			key: 'created_at',
-			header: 'Fecha',
-			width: 20,
-			totalsRowFunction: 'none',
-			totalsRowLabel: 'Totales',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'customer',
-			header: 'Contacto',
-			width: 30,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_amount',
-			header: 'Monto total',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_accumulated',
-			header: 'Amortizado',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_remaining',
-			header: 'Saldo',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'next_payment_date',
-			header: 'Siguiente pago',
-			width: 20,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'comment',
-			header: 'Observacion',
-			width: 30,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'user',
-			header: 'Usuario',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		}
-	];
-	await prepareAndDownload(data, columns, filename, title);
-}
-export async function downloadProducts(
-	products: Product[],
-	filename: string,
-	title = 'Reporte de inventario'
-): Promise<void> {
-	const data = [];
-	for (const product of products) {
-		const stock = getAvailableQuantity(product, get(storeBranch));
-		const price = getMainPrice(product, get(storeBranch));
-		data.push({
-			custom_code: product.custom_code,
-			name: product.name,
-			description: product.description || '',
-			stock: stock,
-			price: price,
-			total_cost: stock * (product.purchase_price || 0),
-			total_price: stock * price,
-			purchase_price: product.purchase_price || 0,
-			measure_code: product.properties.find((p) => p.type_code === 'MEASURE')?.name || '',
-			category: product.properties.find((p) => p.type_code === 'CATEGORY')?.name || '',
-			brand: product.properties.find((p) => p.type_code === 'BRAND')?.name || '',
-			provider: product.contact?.name || ''
-		});
-	}
-
-	const columns = [
-		{
-			key: 'custom_code',
-			header: 'Codigo de producto',
-			width: 20,
-			totalsRowFunction: 'none',
-			totalsRowLabel: 'Totales',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'name',
-			header: 'Nombre',
-			width: 30,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'description',
-			header: 'Descripción',
-			width: 30,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'stock',
-			header: 'Stock',
-			width: 10,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: ''
-		},
-		{
-			key: 'purchase_price',
-			header: 'Costo',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'price',
-			header: 'Precio',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_cost',
-			header: 'Costo Total',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'total_price',
-			header: 'Precio total',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'measure_code',
-			header: 'U. Medida',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'category',
-			header: 'Categoría',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'brand',
-			header: 'Marca',
-			width: 10,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		},
-		{
-			key: 'provider',
-			header: 'Proveedor',
-			width: 15,
-			totalsRowFunction: 'none',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		}
-	];
-	await prepareAndDownload(data, columns, filename, title);
-}
-export async function downloadProductMovent(
-	products: any[],
-	filename: string,
-	title = 'Reporte de movimientos de productos'
-): Promise<void> {
-	const data = [];
-	for (const product of products) {
-		// <td>{item.product_name || '--'}</td>
-		// <td>{item.initial_quantity || 0}</td>
-		// <td>{item.sale_quantity}</td>
-		// <td>{item.purchase_quantity}</td>
-		// <td>{item.available}</td>
-		// <td>{formatCurrency(item.sale_total_price)}</td>
-		data.push({
-			product_name: product.product_name,
-			// initial_quantity: product.initial_quantity,
-			sale_quantity: product.sale_quantity,
-			purchase_quantity: product.purchase_quantity,
-			available: product.available,
-			sale_total_price: roundToTwo(product.sale_total_price)
-		});
-	}
-
-	const columns = [
-		{
-			key: 'product_name',
-			header: 'Nombre',
-			width: 100,
-			totalsRowFunction: 'none',
-			totalsRowLabel: ''
-		},
-		// {
-		// 	key: 'initial_quantity',
-		// 	header: 'Stock inicial',
-		// 	width: 15,
-		// 	totalsRowFunction: 'sum',
-		// 	totalsRowLabel: '',
-		// 	numFmt: ''
-		// },
-		{
-			key: 'sale_quantity',
-			header: 'Ventas',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: ''
-		},
-		{
-			key: 'purchase_quantity',
-			header: 'Compras',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: ''
-		},
-		{
-			key: 'quantity',
-			header: 'Disponible',
-			width: 15,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: ''
-		},
-		{
-			key: 'sale_total_price',
-			header: 'Total Ventas',
-			width: 20,
-			totalsRowFunction: 'sum',
-			totalsRowLabel: '',
-			numFmt: '#,##0.00'
-		}
-	];
-	await prepareAndDownload(data, columns, filename, title);
+	await prepareAndDownloadSiat(data, columns, filename);
 }

@@ -24,11 +24,12 @@ export declare class PrepararFacturaService {
         sha256: string;
         xml: string;
     }>;
-    validarContingencia(credential: AppCrediantialDto, solicitud: SolicitudValidarPaqueteFactura): Promise<import("../../siat-api/servicio-facturacion-compra-venta/dto/RespuestaServicioFacturacion.dto").RespuestaServicioFacturacionDTO>;
+    validarContingencia(credential: AppCrediantialDto, solicitud: SolicitudValidarPaqueteFactura): Promise<any>;
     enviarEmailFactura(solicitud: SolicitudEnviarEmailFacturaDTO): Promise<{
         message: string;
     }>;
     anularEmailFactura(solicitud: SolicitudAnularEmailFacturaDTO): Promise<{
         message: string;
     }>;
+    facturasPendientes(): Promise<void>;
 }
